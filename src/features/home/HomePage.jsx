@@ -1,14 +1,30 @@
-// 홈 대시보드
-// - 진행 중인 집 요약 카드
-// - 계약 체크리스트 진행률
-// - "지금 확인하면 좋을 것" 리스트
-// - 오늘의 자취 TIP
-// - 최근 등록된 집 / 찜한 집 미리보기
+import TopHeader from '../../components/layout/TopHeader'
+import GreetingBanner from './components/GreetingBanner'
+import OngoingHouseCard from './components/OngoingHouseCard'
+import FirstMoveGuideCard from './components/FirstMoveGuideCard'
+import RecommendedChecklist from './components/RecommendedChecklist'
+import TodayTipCard from './components/TodayTipCard'
+import RecentHouseSection from './components/RecentHouseSection'
+
+// 임시 더미 데이터 (추후 API/Context 연동으로 교체)
+const DUMMY_HOUSES = [
+  { id: 1, name: 'ㅁㅁ동 ㅇㅇ빌라', deposit: '1,000', rent: 40 },
+  { id: 2, name: 'ㅁㅁ동 ㅇㅇ빌라', deposit: '1,000', rent: 40 },
+]
+
 export default function HomePage() {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">홈</h1>
-      {/* TODO: 대시보드 위젯 구성 */}
+    <div className="bg-white min-h-screen">
+      <TopHeader />
+      <div className="flex flex-col gap-5 pb-4">
+        <GreetingBanner />
+        <OngoingHouseCard />
+        <FirstMoveGuideCard />
+        <RecommendedChecklist />
+        <TodayTipCard />
+        <RecentHouseSection title="최근 등록된 집" houses={DUMMY_HOUSES} />
+        <RecentHouseSection title="찜 한 집" houses={[]} isWished />
+      </div>
     </div>
   )
 }

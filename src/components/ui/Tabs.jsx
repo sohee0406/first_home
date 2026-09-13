@@ -5,8 +5,8 @@ export default function Tabs({ tabs, active, onChange }) {
       {tabs.map((t) => (
         <button
           key={t}
-          className={`px-3 py-2 whitespace-nowrap ${
-            active === t ? 'font-bold border-b-2 border-black' : 'text-gray-400'
+          className={`px-3 py-2 whitespace-nowrap flex-1 text-center ${
+            active === t ? 'font-bold border-b-2 border-green-500' : 'text-gray-400 border-b-2 border-transparent'
           }`}
           onClick={() => onChange(t)}
         >
