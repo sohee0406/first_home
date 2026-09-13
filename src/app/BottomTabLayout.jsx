@@ -3,8 +3,10 @@ import BottomNav from '../components/layout/BottomNav'
 
 export default function BottomTabLayout() {
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen bg-gray-50">
       <Outlet />
+
+      {/* 모든 페이지에서 공통으로 표시 */}
       <BottomNav />
     </div>
   )

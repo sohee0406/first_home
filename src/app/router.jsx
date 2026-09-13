@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
+
 import BottomTabLayout from './BottomTabLayout'
 import SubPageLayout from '../components/layout/SubPageLayout'
 
 import HomePage from '../features/home/HomePage'
-
 import HouseListPage from '../features/house/pages/HouseListPage'
 import HouseDetailPage from '../features/house/pages/HouseDetailPage'
 import RegisterWizard from '../features/house/pages/register/RegisterWizard'
@@ -25,10 +25,12 @@ import MyPage from '../features/mypage/pages/MyPage'
 const router = createBrowserRouter([
   {
     element: <BottomTabLayout />,
+
     children: [
       // ==========================================
-      // 홈 / 하단 탭
+      // 하단 탭 페이지
       // ==========================================
+
       {
         path: '/',
         element: <HomePage />,
@@ -44,12 +46,19 @@ const router = createBrowserRouter([
         element: <ChecklistHubPage />,
       },
 
+      {
+        path: '/mypage',
+        element: <MyPage />,
+      },
+
       // ==========================================
       // 서브페이지
-      // 뒤로가기 / 닫기 헤더 + BottomNav
+      // 헤더 + BottomNav 모두 유지
       // ==========================================
+
       {
         element: <SubPageLayout />,
+
         children: [
           {
             path: '/checklist/before-visit',
@@ -61,8 +70,6 @@ const router = createBrowserRouter([
             element: <OnSiteCheckPage />,
           },
 
-          // 현장 점검 항목 상세
-          // water, light, drain, mold, bugs ...
           {
             path: '/checklist/on-site/:id',
             element: <ChecklistDetailPage />,
@@ -83,39 +90,34 @@ const router = createBrowserRouter([
             element: <MoveInCheckPage />,
           },
 
+          // 집 등록
           {
             path: '/houses/register',
             element: <RegisterWizard />,
           },
+
+          // ★ 집 상세
+          {
+            path: '/houses/:id',
+            element: <HouseDetailPage />,
+          },
+
+          // 관리자 / 정보 페이지
+          {
+            path: '/admin',
+            element: <AdminHelperPage />,
+          },
+
+          {
+            path: '/admin/registry-doc',
+            element: <RegistryDocPage />,
+          },
+
+          {
+            path: '/admin/move-in-report',
+            element: <MoveInReportPage />,
+          },
         ],
-      },
-
-      // ==========================================
-      // 기타 페이지
-      // ==========================================
-      {
-        path: '/houses/:id',
-        element: <HouseDetailPage />,
-      },
-
-      {
-        path: '/admin',
-        element: <AdminHelperPage />,
-      },
-
-      {
-        path: '/admin/registry-doc',
-        element: <RegistryDocPage />,
-      },
-
-      {
-        path: '/admin/move-in-report',
-        element: <MoveInReportPage />,
-      },
-
-      {
-        path: '/mypage',
-        element: <MyPage />,
       },
     ],
   },

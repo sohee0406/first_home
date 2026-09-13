@@ -27,18 +27,7 @@ export default function App() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-gray-50 flex flex-col justify-between shadow-sm">
       <div>
-        {/* ========================================== */}
-        {/* 1. 상단 헤더 섹션 (뒤로가기, 제목 18px, 닫기) */}
-        {/* ========================================== */}
-        <header className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
-          <button onClick={() => navigate(-1)} className="p-1 rounded-full">
-            <ChevronLeft className="w-6 h-6 text-gray-800" />
-          </button>
-          <span className="font-bold text-gray-950 text-[18px]">집 보러 가기 전</span>
-          <button onClick={handleClose} className="p-1 rounded-full">
-            <X className="w-6 h-6 text-gray-800" />
-          </button>
-        </header>
+        
 
         {/* ========================================== */}
         {/* 2. 상단 타이틀 및 일러스트 섹션 (타이틀 20px, 서브 14px) */}
