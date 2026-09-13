@@ -1,17 +1,25 @@
-# React + Vite
+# 첫 자취 앱 - 프로젝트 구조 안내
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 폴더 구조
+- `src/app/` : 라우터, 전체 레이아웃 설정
+- `src/features/` : 도메인별 폴더 (home, house, checklist, admin, mypage)
+  - 각 feature 안에 `pages/`, `components/`, (필요 시) `context/`를 둡니다.
+- `src/components/` : 여러 feature에서 공용으로 쓰는 컴포넌트 (ui, layout)
+- `src/hooks/` : 커스텀 훅
+- `src/context/` : 앱 전역 Context (로그인 사용자 등)
+- `src/utils/` : 순수 함수, 포맷터
 
-Currently, two official plugins are available:
+## 설치 및 실행
+아직 package.json 의존성은 설치되지 않았습니다. 아래 순서로 진행하세요.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install react react-dom react-router-dom
+npm install -D vite @vitejs/plugin-react tailwindcss postcss autoprefixer
+npm run dev
+```
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-"# first_home" 
+## 다음 단계 제안
+1. `RegisterStep2/3` 폼 필드 실제 구현 (react-hook-form 고려)
+2. `OnSiteCheckPage` 탭별 체크 항목 데이터 구조 설계
+3. `MapView` 실제 지도 SDK(Kakao/Naver/Google Maps) 연동
+4. 인증(AuthContext) 실제 로그인 플로우 연결
