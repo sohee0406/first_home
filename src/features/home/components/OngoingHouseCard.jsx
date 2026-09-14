@@ -1,15 +1,21 @@
 import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // 진행중인 집 + 계약 체크리스트 진행률 카드
 export default function OngoingHouseCard({
+  houseId = 1,
   houseName = "ㅁㅁ동 ㅇㅇ빌라",
   current = 8,
   total = 12,
 }) {
   const percent = Math.round((current / total) * 100);
+  const navigate = useNavigate();
 
   return (
-    <div className="bg-green-50 rounded-2xl p-4 mx-4">
+    <div
+      className="bg-green-50 rounded-2xl p-4 mx-4"
+      onClick={() => navigate(`/houses/${houseId}`)}
+    >
       <span className="text-xs bg-white px-2 py-1 rounded-full text-gray-600">
         진행 중인 집
       </span>
@@ -30,7 +36,13 @@ export default function OngoingHouseCard({
         </div>
       </div>
 
-      <button className="w-full bg-white rounded-xl py-3 mt-3 flex items-center justify-center gap-1 text-sm font-bold">
+      <button
+        className="w-full bg-white rounded-xl py-3 mt-3 flex items-center justify-center gap-1 text-sm font-bold"
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate("/checklist/contract");
+        }}
+      >
         체크리스트 바로 가기 <ChevronRight size={16} />
       </button>
     </div>
