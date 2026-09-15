@@ -111,6 +111,19 @@ const router = createBrowserRouter([
           // =========================
           // 현장 점검 - 상세
           // =========================
+          // 자세히 보기에서 사용하는 경로
+          // /checklist/on-site/detail/water
+          // /checklist/on-site/detail/light
+          // 등
+          {
+            path: "/checklist/on-site/detail/:id",
+            element: <ChecklistDetailPage />,
+          },
+
+          // 기존에 사용하던 상세 경로도 유지
+          // /checklist/on-site/water
+          // /checklist/on-site/light
+          // 등
           {
             path: "/checklist/on-site/:id",
             element: <ChecklistDetailPage />,

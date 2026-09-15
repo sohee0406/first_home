@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Plus, X, MapPin } from "lucide-react";
 import KakaoAroundMap from "../components/KakaoAroundMap";
 import { useHouse } from "../../house/context/HouseContext";
 
 export default function AroundCheckPage() {
+  const navigate = useNavigate();
   const { houses } = useHouse();
 
   const latestHouse = houses?.length > 0 ? houses[houses.length - 1] : null;
@@ -22,10 +24,6 @@ export default function AroundCheckPage() {
 
   const [counts, setCounts] = useState({});
 
-  /* --------------------------------
-     주소 적용
-  --------------------------------- */
-
   const handleAddressSubmit = () => {
     const value = inputAddress.trim();
 
@@ -40,10 +38,6 @@ export default function AroundCheckPage() {
     // 주소가 바뀌면 기존 검색 결과 초기화
     setCounts({});
   };
-
-  /* --------------------------------
-     시설 추가
-  --------------------------------- */
 
   const handleAddFacility = () => {
     const value = facilityInput.trim();
@@ -73,20 +67,11 @@ export default function AroundCheckPage() {
     setFacilityInput("");
   };
 
-  /* --------------------------------
-     시설 삭제
-  --------------------------------- */
-
   const handleRemoveFacility = (id) => {
     const target = facilities.find((facility) => facility.id === id);
 
     setFacilities((prev) => prev.filter((facility) => facility.id !== id));
 
-    /*
-      KakaoAroundMap에서 counts를
-      facility.name을 key로 저장하기 때문에
-      삭제할 때도 name으로 삭제
-    */
     if (target) {
       setCounts((prev) => {
         const next = { ...prev };
@@ -98,16 +83,12 @@ export default function AroundCheckPage() {
     }
   };
 
-  /* --------------------------------
-     카카오맵 검색 결과 개수
-  --------------------------------- */
-
   const handleCountsChange = (newCounts) => {
     setCounts(newCounts || {});
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 pb-28 pt-5">
+    <div className=" bg-white px-4 pb-28 pt-5">
       {/* =========================
           제목
       ========================= */}
@@ -318,6 +299,46 @@ export default function AroundCheckPage() {
           )}
         </section>
       )}
+
+      {/* =========================
+          하단 버튼
+      ========================= */}
+
+      <section className="bg-white px-4 pb-5 pt-8">
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="
+              flex-1
+              py-4
+              bg-[#EAFEF1]
+              text-[#26D383]
+              font-bold
+              text-[16px]
+              rounded-2xl
+            "
+          >
+            이전
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/checklist/on-site")}
+            className="
+              flex-1
+              py-4
+              text-white
+              bg-[#26D383]
+              font-bold
+              text-[16px]
+              rounded-2xl
+            "
+          >
+            확인
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

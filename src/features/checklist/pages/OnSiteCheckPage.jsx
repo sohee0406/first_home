@@ -1,71 +1,169 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronRight, Check } from "lucide-react";
 
-// 필수확인 페이지
+import {
+  REQUIRED_CHECKLIST_KEY,
+  ALL_ITEMS_FLAT,
+} from "../data/onSiteChecklistData";
+
+// ==========================================
+// 상단 탭
+// ==========================================
 const TABS = [
-  { label: "필수확인", path: "/checklist/on-site" },
-  { label: "현관", path: "/checklist/on-site/entrance" },
-  { label: "방", path: "/checklist/on-site/room" },
-  { label: "주방", path: "/checklist/on-site/kitchen" },
-  { label: "거실", path: "/checklist/on-site/living-room" },
-  { label: "기타", path: "/checklist/on-site/etc" },
+  {
+    label: "필수확인",
+    path: "/checklist/on-site",
+  },
+  {
+    label: "현관",
+    path: "/checklist/on-site/entrance",
+  },
+  {
+    label: "방",
+    path: "/checklist/on-site/room",
+  },
+  {
+    label: "주방",
+    path: "/checklist/on-site/kitchen",
+  },
+  {
+    label: "화장실",
+    path: "/checklist/on-site/bathroom",
+  },
+  {
+    label: "기타",
+    path: "/checklist/on-site/etc",
+  },
 ];
 
 export default function OnSiteCheckPage() {
   const navigate = useNavigate();
 
   // ==========================================
-  // 필수확인 하드코딩 테스트용
+  // 필수 체크된 항목
   // ==========================================
-
-  const checkListItems = [
-    {
-      id: "water",
-      title: "수압",
-      badgeType: "중요",
-      badgeColor: "text-red-500",
-      description: "싱크대와 샤워기에서 물을 동시에 틀어보세요",
-    },
-
-    {
-      id: "light",
-      title: "채광",
-      badgeType: "중요",
-      badgeColor: "text-red-500",
-      description: "창문을 열고 채광 상태를 확인하세요",
-    },
-
-    {
-      id: "drain",
-      title: "배수",
-      badgeType: "확인",
-      badgeColor: "text-emerald-500",
-      description: "물이 잘 빠지는지 확인하세요",
-    },
-
-    {
-      id: "mold",
-      title: "곰팡이",
-      badgeType: "주의",
-      badgeColor: "text-amber-500",
-      description: "벽/천장/모서리에 곰팡이 흔적을 확인하세요",
-    },
-
-    {
-      id: "bugs",
-      title: "벌레 흔적",
-      badgeType: "주의",
-      badgeColor: "text-amber-500",
-      description: "해충 흔적이 있는지 확인하세요",
-    },
-  ];
+  const [requiredItems, setRequiredItems] = useState([]);
 
   // ==========================================
-  // 필수확인 테스트용
+  // 완료된 항목
   // ==========================================
+  const [completedItems, setCompletedItems] = useState([]);
 
+  // ==========================================
+  // localStorage에서 필수 항목 불러오기
+  // ==========================================
+  const loadRequiredItems = () => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(REQUIRED_CHECKLIST_KEY) || "[]",
+      );
+
+      if (Array.isArray(saved)) {
+        setRequiredItems(saved);
+      } else {
+        setRequiredItems([]);
+      }
+    } catch {
+      setRequiredItems([]);
+    }
+  };
+
+  // ==========================================
+  // 페이지 처음 들어왔을 때 불러오기
+  // ==========================================
+  useEffect(() => {
+    loadRequiredItems();
+  }, []);
+
+  // ==========================================
+  // 다른 페이지에서 돌아왔을 때
+  // localStorage 최신 상태 다시 확인
+  // ==========================================
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadRequiredItems();
+    };
+
+    const handleRequiredChecklistChange = () => {
+      loadRequiredItems();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    window.addEventListener(
+      "requiredChecklistChanged",
+      handleRequiredChecklistChange,
+    );
+
+    window.addEventListener("focus", loadRequiredItems);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+
+      window.removeEventListener(
+        "requiredChecklistChanged",
+        handleRequiredChecklistChange,
+      );
+
+      window.removeEventListener("focus", loadRequiredItems);
+    };
+  }, []);
+
+  // ==========================================
+  // 필수확인에 등록된 항목만 가져오기
+  // ==========================================
+  const checkListItems = ALL_ITEMS_FLAT.filter((item) =>
+    requiredItems.includes(item.id),
+  );
+
+  // ==========================================
+  // 완료 처리
+  // ==========================================
   const handleItemClick = (id) => {
+    setCompletedItems((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((itemId) => itemId !== id);
+      }
+
+      return [...prev, id];
+    });
+  };
+
+  // ==========================================
+  // 자세히 보기
+  // ==========================================
+  const handleDetailClick = (e, id) => {
+    e.stopPropagation();
+
     navigate(`/checklist/on-site/detail/${id}`);
   };
+
+  // ==========================================
+  // 완료된 항목을 아래로 이동
+  // ==========================================
+  const sortedItems = [...checkListItems].sort((a, b) => {
+    const aCompleted = completedItems.includes(a.id);
+    const bCompleted = completedItems.includes(b.id);
+
+    if (aCompleted === bCompleted) {
+      return 0;
+    }
+
+    return aCompleted ? 1 : -1;
+  });
+
+  // ==========================================
+  // 전체 선택 개수
+  // ==========================================
+  const totalCount = checkListItems.length;
+
+  // ==========================================
+  // 완료 개수
+  // ==========================================
+  const checkedCount = completedItems.filter((id) =>
+    requiredItems.includes(id),
+  ).length;
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-sm pb-24">
@@ -97,57 +195,137 @@ export default function OnSiteCheckPage() {
       {/* 진행 상황 */}
       {/* ========================================== */}
 
-      <div className="px-4 py-3">
-        <span className="font-bold text-gray-900 text-[16px]">16/22 완료</span>
+      <div className="px-4 py-4">
+        <span className="font-bold text-gray-900 text-[16px]">
+          {checkedCount}/{totalCount} 완료
+        </span>
       </div>
 
       {/* ========================================== */}
-      {/* 필수확인 테스트 카드 */}
+      {/* 카드 */}
       {/* ========================================== */}
 
       <div className="px-4 space-y-3">
-        {checkListItems.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => handleItemClick(item.id)}
-            className="
-              rounded-2xl
-              p-4
-              shadow-[0_2px_8px_rgba(0,0,0,0.04)]
-              border
-              border-gray-100
-              cursor-pointer
-              active:scale-[0.98]
-              transition-transform
-              bg-white
-            "
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-gray-950 text-[16px]">
-                {item.title}
-              </h3>
+        {sortedItems.length > 0 ? (
+          sortedItems.map((item) => {
+            const isCompleted = completedItems.includes(item.id);
 
-              <span className={`text-[12px] font-semibold ${item.badgeColor}`}>
-                ★ {item.badgeType}
-              </span>
-            </div>
-
-            <p className="text-gray-500 text-[13px]">{item.description}</p>
-
-            <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/checklist/on-site/detail/${item.id}`);
-                }}
-                className="text-[12px] text-gray-500 font-medium"
+            return (
+              <div
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                className={`
+                  rounded-2xl
+                  p-4
+                  border
+                  cursor-pointer
+                  transition-all
+                  active:scale-[0.98]
+                  ${
+                    isCompleted
+                      ? "bg-gray-100 border-gray-200"
+                      : "bg-white border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                  }
+                `}
               >
-                자세히 보기 →
-              </button>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3
+                        className={`
+                          font-bold
+                          text-[16px]
+                          ${isCompleted ? "text-gray-400" : "text-gray-950"}
+                        `}
+                      >
+                        {item.title}
+                      </h3>
+
+                      <span
+                        className={`
+                          text-[12px]
+                          font-semibold
+                          ${isCompleted ? "text-gray-400" : item.badgeColor}
+                        `}
+                      >
+                        ★ {item.badgeType}
+                      </span>
+                    </div>
+
+                    <p
+                      className={`
+                        text-[13px]
+                        leading-relaxed
+                        max-w-[280px]
+                        ${isCompleted ? "text-gray-400" : "text-gray-500"}
+                      `}
+                    >
+                      {item.description}
+                    </p>
+                  </div>
+
+                  {/* 체크 */}
+                  <div
+                    className={`
+                      w-7
+                      h-7
+                      shrink-0
+                      rounded-full
+                      flex
+                      items-center
+                      justify-center
+                      border
+                      ${
+                        isCompleted
+                          ? "bg-gray-300 border-gray-300"
+                          : "bg-white border-gray-300"
+                      }
+                    `}
+                  >
+                    {isCompleted && (
+                      <Check size={16} strokeWidth={3} className="text-white" />
+                    )}
+                  </div>
+                </div>
+
+                {/* 자세히 보기 */}
+                <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={(e) => handleDetailClick(e, item.id)}
+                    className={`
+                      flex
+                      items-center
+                      gap-1
+                      text-[12px]
+                      font-medium
+                      ${isCompleted ? "text-gray-400" : "text-gray-500"}
+                    `}
+                  >
+                    자세히 보기
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-5 py-12 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#EAFEF1] text-[#26D383]">
+              ✓
             </div>
+
+            <p className="text-[14px] font-bold text-gray-700">
+              아직 선택한 필수 항목이 없어요.
+            </p>
+
+            <p className="mt-2 text-[12px] leading-relaxed text-gray-400">
+              현장 점검 자세히 보기를 확인한 뒤
+              <br />
+              필수 항목 추가를 눌러주세요.
+            </p>
           </div>
-        ))}
+        )}
       </div>
 
       {/* ========================================== */}

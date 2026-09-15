@@ -16,20 +16,20 @@ const DEFAULT_CHECK_ITEMS = [
     total: 6,
   },
   {
-    title: "현장 점검",
-    status: "progress",
-    value: "0/22",
-    path: "/checklist/on-site",
-    checked: 0,
-    total: 22,
-  },
-  {
     title: "주변 점검",
     status: "progress",
     value: "0/6",
     path: "/checklist/around",
     checked: 0,
     total: 6,
+  },
+  {
+    title: "현장 점검",
+    status: "progress",
+    value: "0/22",
+    path: "/checklist/on-site",
+    checked: 0,
+    total: 22,
   },
   {
     title: "계약 전",
