@@ -1,19 +1,22 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// 현장 점검 체크리스트
-// 필수확인 / 현관 / 방 / 주방 / 화장실
-const TABS = ["필수확인", "현관", "방", "주방", "화장실"];
+// 필수확인 페이지
+const TABS = [
+  { label: "필수확인", path: "/checklist/on-site" },
+  { label: "현관", path: "/checklist/on-site/entrance" },
+  { label: "방", path: "/checklist/on-site/room" },
+  { label: "주방", path: "/checklist/on-site/kitchen" },
+  { label: "거실", path: "/checklist/on-site/living-room" },
+  { label: "기타", path: "/checklist/on-site/etc" },
+];
 
 export default function OnSiteCheckPage() {
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState(TABS[0]);
+  // ==========================================
+  // 필수확인 하드코딩 테스트용
+  // ==========================================
 
-  // ==========================================
-  // 점검 항목 데이터
-  // id가 상세 페이지 URL에 사용됨
-  // ==========================================
   const checkListItems = [
     {
       id: "water",
@@ -21,7 +24,6 @@ export default function OnSiteCheckPage() {
       badgeType: "중요",
       badgeColor: "text-red-500",
       description: "싱크대와 샤워기에서 물을 동시에 틀어보세요",
-      selected: false,
     },
 
     {
@@ -30,7 +32,6 @@ export default function OnSiteCheckPage() {
       badgeType: "중요",
       badgeColor: "text-red-500",
       description: "창문을 열고 채광 상태를 확인하세요",
-      selected: false,
     },
 
     {
@@ -39,7 +40,6 @@ export default function OnSiteCheckPage() {
       badgeType: "확인",
       badgeColor: "text-emerald-500",
       description: "물이 잘 빠지는지 확인하세요",
-      selected: false,
     },
 
     {
@@ -48,7 +48,6 @@ export default function OnSiteCheckPage() {
       badgeType: "주의",
       badgeColor: "text-amber-500",
       description: "벽/천장/모서리에 곰팡이 흔적을 확인하세요",
-      selected: false,
     },
 
     {
@@ -57,22 +56,15 @@ export default function OnSiteCheckPage() {
       badgeType: "주의",
       badgeColor: "text-amber-500",
       description: "해충 흔적이 있는지 확인하세요",
-      selected: false,
     },
   ];
 
   // ==========================================
-  // 닫기
+  // 필수확인 테스트용
   // ==========================================
-  const handleClose = () => {
-    navigate("/");
-  };
 
-  // ==========================================
-  // 항목 클릭
-  // ==========================================
   const handleItemClick = (id) => {
-    navigate(`/checklist/on-site/${id}`);
+    navigate(`/checklist/on-site/detail/${id}`);
   };
 
   return (
@@ -80,21 +72,22 @@ export default function OnSiteCheckPage() {
       {/* ========================================== */}
       {/* 상단 탭 */}
       {/* ========================================== */}
+
       <div className="flex gap-2 px-4 py-3 bg-white overflow-x-auto no-scrollbar border-b border-gray-100">
-        {TABS.map((t) => {
-          const isActive = tab === t;
+        {TABS.map((tab) => {
+          const isActive = tab.label === "필수확인";
 
           return (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className="px-4 py-2 rounded-xl text-[14px] font-medium shrink-0 transition-none"
+              key={tab.label}
+              onClick={() => navigate(tab.path)}
+              className="px-4 py-2 rounded-xl text-[14px] font-medium shrink-0"
               style={{
                 backgroundColor: isActive ? "#EAFEF1" : "#F3F4F6",
                 color: isActive ? "#26D383" : "#4B5563",
               }}
             >
-              {t}
+              {tab.label}
             </button>
           );
         })}
@@ -103,33 +96,32 @@ export default function OnSiteCheckPage() {
       {/* ========================================== */}
       {/* 진행 상황 */}
       {/* ========================================== */}
+
       <div className="px-4 py-3">
         <span className="font-bold text-gray-900 text-[16px]">16/22 완료</span>
       </div>
 
       {/* ========================================== */}
-      {/* 점검 항목 */}
+      {/* 필수확인 테스트 카드 */}
       {/* ========================================== */}
+
       <div className="px-4 space-y-3">
         {checkListItems.map((item) => (
           <div
             key={item.id}
             onClick={() => handleItemClick(item.id)}
             className="
-              rounded-2xl 
-              p-4 
-              shadow-[0_2px_8px_rgba(0,0,0,0.04)] 
-              border 
-              border-gray-100 
-              cursor-pointer 
-              active:scale-[0.98] 
-              transition-transform 
+              rounded-2xl
+              p-4
+              shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+              border
+              border-gray-100
+              cursor-pointer
+              active:scale-[0.98]
+              transition-transform
+              bg-white
             "
-            style={{
-              backgroundColor: item.selected ? "#EAFEF1" : "#FFFFFF",
-            }}
           >
-            {/* 제목 + 중요도 */}
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-bold text-gray-950 text-[16px]">
                 {item.title}
@@ -140,24 +132,56 @@ export default function OnSiteCheckPage() {
               </span>
             </div>
 
-            {/* 설명 */}
             <p className="text-gray-500 text-[13px]">{item.description}</p>
+
+            <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/checklist/on-site/detail/${item.id}`);
+                }}
+                className="text-[12px] text-gray-500 font-medium"
+              >
+                자세히 보기 →
+              </button>
+            </div>
           </div>
         ))}
       </div>
-      <section className="px-[16px]">
-        {/* 버튼 */}
+
+      {/* ========================================== */}
+      {/* 하단 버튼 */}
+      {/* ========================================== */}
+
+      <section className="px-4">
         <div className="mt-8 flex gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="flex-1 py-4 bg-[#EAFEF1] text-[#26D383] font-bold text-lg rounded-2xl  "
+            className="
+              flex-1
+              py-4
+              bg-[#EAFEF1]
+              text-[#26D383]
+              font-bold
+              text-lg
+              rounded-2xl
+            "
           >
             이전
           </button>
 
           <button
             onClick={() => navigate("/checklist/contract-final")}
-            className="flex-1 py-4 text-white bg-[#26D383] font-bold text-lg rounded-2xl  "
+            className="
+              flex-1
+              py-4
+              text-white
+              bg-[#26D383]
+              font-bold
+              text-lg
+              rounded-2xl
+            "
           >
             확인
           </button>

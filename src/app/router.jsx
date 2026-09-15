@@ -14,6 +14,7 @@ import RegisterWizard from "../features/house/pages/register/RegisterWizard";
 import ChecklistHubPage from "../features/checklist/pages/ChecklistHubPage";
 import BeforeVisitPage from "../features/checklist/pages/BeforeVisitPage";
 import OnSiteCheckPage from "../features/checklist/pages/OnSiteCheckPage";
+import OnSiteCategoryPage from "../features/checklist/pages/OnSiteCategoryPage";
 import ChecklistDetailPage from "../features/checklist/pages/ChecklistDetailPage";
 import AroundCheckPage from "../features/checklist/pages/AroundCheckPage";
 import MoveInCheckPage from "../features/checklist/pages/MoveInCheckPage";
@@ -32,13 +33,17 @@ const router = createBrowserRouter([
   {
     element: <BottomTabLayout />,
     children: [
+      // =========================
       // 홈
+      // =========================
       {
         path: "/",
         element: <HomePage />,
       },
 
+      // =========================
       // 홈 제외 모든 페이지
+      // =========================
       {
         element: <SubPageLayout />,
         children: [
@@ -65,32 +70,79 @@ const router = createBrowserRouter([
             path: "/checklist",
             element: <ChecklistHubPage />,
           },
+
           {
             path: "/checklist/before-visit",
             element: <BeforeVisitPage />,
           },
+
+          // =========================
+          // 현장 점검 - 필수확인
+          // =========================
           {
             path: "/checklist/on-site",
             element: <OnSiteCheckPage />,
           },
+
+          // =========================
+          // 현장 점검 - 공간별
+          // =========================
+          {
+            path: "/checklist/on-site/entrance",
+            element: <OnSiteCategoryPage />,
+          },
+          {
+            path: "/checklist/on-site/room",
+            element: <OnSiteCategoryPage />,
+          },
+          {
+            path: "/checklist/on-site/kitchen",
+            element: <OnSiteCategoryPage />,
+          },
+          {
+            path: "/checklist/on-site/bathroom",
+            element: <OnSiteCategoryPage />,
+          },
+          {
+            path: "/checklist/on-site/etc",
+            element: <OnSiteCategoryPage />,
+          },
+
+          // =========================
+          // 현장 점검 - 상세
+          // =========================
           {
             path: "/checklist/on-site/:id",
             element: <ChecklistDetailPage />,
           },
+
+          // =========================
+          // 주변 점검
+          // =========================
           {
             path: "/checklist/around",
             element: <AroundCheckPage />,
           },
+
+          // =========================
+          // 계약 전 최종 확인
+          // =========================
           {
             path: "/checklist/contract-final",
             element: <ContractFinalCheckPage />,
           },
+
+          // =========================
+          // 입주 점검
+          // =========================
           {
             path: "/checklist/move-in",
             element: <MoveInCheckPage />,
           },
 
+          // =========================
           // 계약 전 체크리스트 상세
+          // =========================
           {
             path: "/checklist/contract/:type",
             element: <ContractChecklistDetailPage />,
