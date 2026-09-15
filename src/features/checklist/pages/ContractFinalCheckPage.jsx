@@ -6,8 +6,7 @@ const CHECKLIST_ITEMS = [
   {
     id: 1,
     title: "등기부등본",
-    badge: "중요",
-    description: "소유자의 권리관계를 확인하세요",
+    description: "소유자와 권리관계를 확인하세요",
     path: "/checklist/contract/registry",
     icon: (
       <svg
@@ -28,8 +27,7 @@ const CHECKLIST_ITEMS = [
   {
     id: 2,
     title: "임대인 정보",
-    badge: "중요",
-    description: "실제 임대인과 계약하는지 확인하세요",
+    description: "실제 임대인인지 확인하세요",
     path: "/checklist/contract/landlord",
     icon: (
       <svg
@@ -50,7 +48,6 @@ const CHECKLIST_ITEMS = [
   {
     id: 3,
     title: "근저당",
-    badge: "중요",
     description: "근저당 설정 여부를 확인하세요",
     path: "/checklist/contract/mortgage",
     icon: (
@@ -72,7 +69,6 @@ const CHECKLIST_ITEMS = [
   {
     id: 4,
     title: "관리비",
-    badge: "중요",
     description: "관리비 포함 항목을 확인하세요",
     path: "/checklist/contract/management-fee",
     icon: (
@@ -94,8 +90,7 @@ const CHECKLIST_ITEMS = [
   {
     id: 5,
     title: "특약사항",
-    badge: "중요",
-    description: "계약서 특약을 작성하세요",
+    description: "계약서 특약을 확인하세요",
     path: "/checklist/contract/special-clause",
     icon: (
       <svg
@@ -189,7 +184,6 @@ export default function ContractFinalCheckPage() {
                 `}
               >
                 <div className="flex items-start justify-between gap-3">
-                  {/* 아이콘 + 내용 */}
                   <div className="flex items-center space-x-4 min-w-0 flex-1">
                     {/* 아이콘 */}
                     <div
@@ -223,34 +217,21 @@ export default function ContractFinalCheckPage() {
 
                     {/* 텍스트 */}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span
-                          className={`
-                            font-bold
-                            text-base
-                            ${isCompleted ? "text-gray-400" : "text-gray-900"}
-                          `}
-                        >
-                          {item.title}
-                        </span>
-
-                        <span
-                          className={`
-                            text-[12px]
-                            font-semibold
-                            ${
-                              isCompleted ? "text-gray-400" : "text-emerald-500"
-                            }
-                          `}
-                        >
-                          ★ {item.badge}
-                        </span>
-                      </div>
+                      <span
+                        className={`
+                          font-bold
+                          text-base
+                          ${isCompleted ? "text-gray-400" : "text-gray-900"}
+                        `}
+                      >
+                        {item.title}
+                      </span>
 
                       <p
                         className={`
+                          mt-1
                           text-sm
-                          truncate
+                          leading-relaxed
                           ${isCompleted ? "text-gray-400" : "text-gray-500"}
                         `}
                       >
@@ -259,7 +240,7 @@ export default function ContractFinalCheckPage() {
                     </div>
                   </div>
 
-                  {/* 체크 버튼 */}
+                  {/* 체크 */}
                   <div
                     className={`
                       w-7
@@ -307,7 +288,7 @@ export default function ContractFinalCheckPage() {
         </div>
       </div>
 
-      {/* 버튼 */}
+      {/* 하단 버튼 */}
       <div className="mt-8 flex gap-3">
         <button
           onClick={() => navigate(-1)}

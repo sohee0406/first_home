@@ -162,13 +162,15 @@ export default function ContractChecklistDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-5 py-7 max-w-md mx-auto">
+    <div className="min-h-screen bg-white px-5 py-7 ">
       {/* 제목 */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 leading-snug">
+        <h1 className="text-[22px] font-bold text-gray-900 leading-snug">
           {content.title}
           <br />
-          <span className="text-emerald-500">{content.subtitle}</span>
+          <span className="text-emerald-500 text-[18px]">
+            {content.subtitle}
+          </span>
         </h1>
 
         <p className="mt-3 text-sm text-gray-500 leading-relaxed">
