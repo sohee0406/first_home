@@ -1,189 +1,154 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Pencil, Check, X } from "lucide-react";
 
 export default function MemoBox({ memo = "", onSave }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [tempMemo, setTempMemo] = useState(memo);
+  const [value, setValue] = useState(memo || "");
 
-  const hasMemo = memo.trim().length > 0;
+  useEffect(() => {
+    setValue(memo || "");
+  }, [memo]);
 
-  // 메모 작성/수정 시작
   const handleEdit = () => {
-    setTempMemo(memo);
+    setValue(memo || "");
     setIsEditing(true);
   };
 
-  // 메모 저장
   const handleSave = () => {
-    onSave(tempMemo.trim());
+    const trimmedValue = value.trim();
+
+    if (onSave) {
+      onSave(trimmedValue);
+    }
+
     setIsEditing(false);
   };
 
-  // 취소
   const handleCancel = () => {
-    setTempMemo(memo);
+    setValue(memo || "");
     setIsEditing(false);
   };
 
   return (
-    <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-4">
+    <div className="border border-gray-100 rounded-xl p-4 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      {/* 메모 헤더 */}
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-[15px] text-gray-900">메모</span>
 
-      {/* =========================
-          헤더
-      ========================= */}
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[15px] font-bold text-gray-900">
-          메모
-        </span>
-
-        {!isEditing && hasMemo && (
+        {!isEditing && (
           <button
+            type="button"
             onClick={handleEdit}
-            className="text-[13px] font-medium text-gray-500"
+            className="flex items-center gap-1 text-[13px] text-gray-500"
           >
+            <Pencil size={14} strokeWidth={1.7} />
             수정
           </button>
         )}
       </div>
 
-      {/* =========================
-          입력 모드
-      ========================= */}
+      {/* 수정 중 */}
       {isEditing ? (
-        <div>
-
+        <div className="mt-3">
           <textarea
-            value={tempMemo}
-            onChange={(e) => setTempMemo(e.target.value)}
-            placeholder="이 집에 대한 메모를 남겨보세요."
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="이 집에 대한 메모를 작성해주세요."
             maxLength={300}
             autoFocus
             className="
               w-full
-              min-h-[130px]
+              min-h-[110px]
               resize-none
               rounded-xl
               bg-gray-50
               border
               border-gray-200
-              px-4
-              py-3
-              text-[15px]
-              leading-[1.55]
+              p-3
+              text-[14px]
               text-gray-800
-              placeholder:text-gray-400
+              leading-relaxed
               outline-none
-              focus:border-gray-400
+              focus:border-[#26D383]
             "
           />
 
-          <div className="flex justify-between items-center mt-2">
+          <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] text-gray-400">
-              {tempMemo.length}/300
+              {value.length}/300
             </span>
 
             <div className="flex gap-2">
+              {/* 취소 */}
               <button
+                type="button"
                 onClick={handleCancel}
                 className="
-                  h-[38px]
-                  px-4
+                  flex
+                  items-center
+                  gap-1
+                  px-3
+                  py-2
                   rounded-lg
                   bg-gray-100
-                  text-[13px]
-                  font-medium
+                  text-[12px]
                   text-gray-600
                 "
               >
+                <X size={13} />
                 취소
               </button>
 
+              {/* 저장 */}
               <button
+                type="button"
                 onClick={handleSave}
                 className="
-                  h-[38px]
-                  px-4
+                  flex
+                  items-center
+                  gap-1
+                  px-3
+                  py-2
                   rounded-lg
                   bg-[#26D383]
-                  text-[13px]
-                  font-semibold
+                  text-[12px]
                   text-white
-                  active:scale-[0.97]
-                  transition-transform
+                  font-semibold
                 "
               >
+                <Check size={13} />
                 저장
               </button>
             </div>
           </div>
-
         </div>
       ) : (
-
-        /* =========================
-           메모 보기 모드
-        ========================= */
-        hasMemo ? (
-          <button
-            onClick={handleEdit}
-            className="
-              w-full
-              text-left
-              rounded-xl
-              bg-gray-50
-              px-4
-              py-3.5
-              active:scale-[0.99]
-              transition-transform
-            "
-          >
-            <p
-              className="
-                text-[15px]
-                leading-[1.55]
-                text-gray-800
-                whitespace-pre-line
-                break-words
-              "
+        /* 메모 보기 */
+        <div className="mt-3">
+          {memo ? (
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="w-full text-left"
             >
-              {memo}
-            </p>
-          </button>
-        ) : (
-
-          /* =========================
-             메모 없음
-          ========================= */
-          <button
-            onClick={handleEdit}
-            className="
-              w-full
-              flex
-              items-center
-              justify-between
-              rounded-xl
-              bg-gray-50
-              px-4
-              py-4
-              text-left
-              active:scale-[0.99]
-              transition-transform
-            "
-          >
-            <div>
-              <p className="text-[14px] font-medium text-gray-600">
-                이 집에 메모를 남겨보세요
+              <p className="text-[14px] text-gray-700 leading-relaxed whitespace-pre-wrap">
+                {memo}
               </p>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="w-full text-left"
+            >
+              <p className="text-[13px] text-gray-400">작성한 메모가 없어요</p>
 
-              <p className="mt-1 text-[12px] text-gray-400">
-                마음에 들었던 점이나 아쉬운 점을 기록할 수 있어요
+              <p className="text-[12px] text-gray-300 mt-1">
+                이 집에 대한 메모를 남겨보세요.
               </p>
-            </div>
-
-            <span className="text-[21px] font-light text-gray-400">
-              +
-            </span>
-          </button>
-        )
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

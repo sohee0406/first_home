@@ -22,8 +22,9 @@ export default function HomePage() {
         <FirstMoveGuideCard />
         <RecommendedChecklist />
         <TodayTipCard />
-        <RecentHouseSection title="최근 등록된 집" houses={DUMMY_HOUSES} />
-        <RecentHouseSection title="찜 한 집" houses={[]} isWished />
+        <RecentHouseSection title="최근 등록된 집" />
+
+        <RecentHouseSection title="찜한 집" isWished />
       </div>
     </div>
   );
