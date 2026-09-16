@@ -661,7 +661,7 @@ export default function HouseDetailPage() {
                   key={`${item.title}-${index}`}
                   onClick={() => {
                     if (item.path) {
-                      navigate(item.path);
+                      navigate(`${item.path}?houseId=${house.id}`);
                     }
                   }}
                   className={`

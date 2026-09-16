@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Check } from "lucide-react";
+import { ChevronRight, Check, ExternalLink } from "lucide-react";
 
 export default function AdminHelperPage() {
   const navigate = useNavigate();
@@ -32,13 +32,22 @@ export default function AdminHelperPage() {
 
   // 생활 정리 탭별 안내 텍스트
   const utilityContents = {
-    전기: "한전ON 홈페이지나 모바일 앱, 또는 고객센터(국번없이 123)를 통해 신청할 수 있어요!",
-    가스: "도시가스 관할 고객센터에 연락하거나 지역별 가스 앱을 통해 명의 변경을 신청하세요.",
-    수도: "해당 지역 시·군·구청 상수도사업소 또는 관할 행정복지센터에 문의하여 변경하세요.",
+    전기: "한전ON 홈페이지나 모바일 앱을 통해 전기 사용 신청 및 명의 변경을 확인하세요.",
+    가스: "도시가스 관할 고객센터에 연락하거나 지역별 도시가스 홈페이지에서 명의 변경을 확인하세요.",
+    수도: "거주 지역의 상수도사업소 또는 관할 행정기관에서 수도 사용 및 명의 변경을 확인하세요.",
     관리비:
       "관리사무소에 방문하거나 연락하여 입주자 명의 및 관리비 납부 정보를 변경하세요.",
     인터넷:
       "이용 중인 통신사 고객센터를 통해 이전 설치 또는 명의 변경 및 해지를 신청하세요.",
+  };
+
+  // 실제로 연결할 수 있는 공식 홈페이지
+  const utilityLinks = {
+    전기: "https://online.kepco.co.kr/",
+  };
+
+  const openExternalLink = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -73,6 +82,7 @@ export default function AdminHelperPage() {
             </h2>
 
             <button
+              type="button"
               onClick={() => setShowAllTasks(!showAllTasks)}
               className="text-xs text-gray-400 font-medium"
             >
@@ -269,6 +279,7 @@ export default function AdminHelperPage() {
 
               return (
                 <button
+                  type="button"
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`py-2 rounded-xl text-xs font-semibold transition-all text-center ${
@@ -292,16 +303,28 @@ export default function AdminHelperPage() {
               {utilityContents[activeTab]}
             </p>
 
-            <button
-              type="button"
-              className="px-4 py-2 rounded-xl text-xs font-semibold"
-              style={{
-                backgroundColor: "#EAFEF1",
-                color: "#25D383",
-              }}
-            >
-              홈페이지 바로가기
-            </button>
+            {utilityLinks[activeTab] ? (
+              <button
+                type="button"
+                onClick={() => openExternalLink(utilityLinks[activeTab])}
+                className="px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5"
+                style={{
+                  backgroundColor: "#EAFEF1",
+                  color: "#25D383",
+                }}
+              >
+                홈페이지 바로가기
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 bg-gray-100"
+              >
+                관할 기관 확인하기
+              </button>
+            )}
           </div>
         </div>
 
@@ -372,6 +395,7 @@ export default function AdminHelperPage() {
                   </span>
 
                   <button
+                    type="button"
                     onClick={() => setShowTip(false)}
                     className="text-amber-400"
                   >

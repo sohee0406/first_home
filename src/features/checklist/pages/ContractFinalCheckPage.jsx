@@ -1,23 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Check } from "lucide-react";
 
 import { useHouse } from "../../house/context/HouseContext";
-
-// 계약 전 체크리스트 완료 상태를 저장하는 키
-const COMPLETED_STORAGE_KEY = "first_home_contract_final_checklist";
-
-function loadCompletedItems() {
-  try {
-    const saved = JSON.parse(
-      localStorage.getItem(COMPLETED_STORAGE_KEY) || "[]",
-    );
-
-    return Array.isArray(saved) ? saved : [];
-  } catch {
-    return [];
-  }
-}
 
 const CHECKLIST_ITEMS = [
   {
@@ -99,7 +84,7 @@ const CHECKLIST_ITEMS = [
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-6 9l2 2 4-4"
         />
       </svg>
     ),
@@ -129,28 +114,60 @@ const CHECKLIST_ITEMS = [
 
 export default function ContractFinalCheckPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { houses, updateChecklistProgress } = useHouse();
 
-  const [completedItems, setCompletedItems] = useState(() =>
-    loadCompletedItems(),
-  );
+  const houseId = searchParams.get("houseId");
 
-  // 현재 진행 중인 집(체크리스트 진행 상태를 반영할 대상)
   const currentHouse = useMemo(() => {
     if (!houses || houses.length === 0) {
       return null;
     }
 
-    return (
-      houses.find((house) => {
-        const checked = Number(house.checked || 0);
-        const total = Number(house.totalInspection || 0);
+    if (houseId) {
+      const selectedHouse = houses.find(
+        (house) => String(house.id) === String(houseId),
+      );
 
-        return checked < total;
-      }) || houses[0]
-    );
-  }, [houses]);
+      if (selectedHouse) {
+        return selectedHouse;
+      }
+    }
+
+    const inProgressHouse = houses.find((house) => {
+      const checked = Number(house.checked || 0);
+      const total = Number(house.totalInspection || 0);
+
+      return checked < total;
+    });
+
+    return inProgressHouse || houses[houses.length - 1];
+  }, [houses, houseId]);
+
+  const completedStorageKey = currentHouse
+    ? `first_home_contract_final_checklist_${currentHouse.id}`
+    : "first_home_contract_final_checklist";
+
+  const loadCompletedItems = () => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(completedStorageKey) || "[]",
+      );
+
+      return Array.isArray(saved) ? saved : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const [completedItems, setCompletedItems] = useState(() =>
+    loadCompletedItems(),
+  );
+
+  useEffect(() => {
+    setCompletedItems(loadCompletedItems());
+  }, [completedStorageKey]);
 
   const handleItemClick = (id) => {
     setCompletedItems((prev) => {
@@ -162,33 +179,38 @@ export default function ContractFinalCheckPage() {
     });
   };
 
+  const getPathWithHouseId = (path) => {
+    if (!houseId) {
+      return path;
+    }
+
+    return `${path}?houseId=${houseId}`;
+  };
+
   const handleDetailClick = (e, path) => {
     e.stopPropagation();
-    navigate(path);
+    navigate(getPathWithHouseId(path));
   };
 
   const sortedItems = [...CHECKLIST_ITEMS].sort((a, b) => {
     const aCompleted = completedItems.includes(a.id);
     const bCompleted = completedItems.includes(b.id);
 
-    if (aCompleted === bCompleted) return 0;
+    if (aCompleted === bCompleted) {
+      return 0;
+    }
 
     return aCompleted ? 1 : -1;
   });
 
-  // 완료 상태를 로컬스토리지에 저장
   useEffect(() => {
     try {
-      localStorage.setItem(
-        COMPLETED_STORAGE_KEY,
-        JSON.stringify(completedItems),
-      );
+      localStorage.setItem(completedStorageKey, JSON.stringify(completedItems));
     } catch (error) {
       console.error("계약 전 체크리스트 저장 실패:", error);
     }
-  }, [completedItems]);
+  }, [completedItems, completedStorageKey]);
 
-  // 계약 전 진행 상태를 HouseContext에 반영
   useEffect(() => {
     if (!currentHouse) {
       return;
@@ -202,10 +224,13 @@ export default function ContractFinalCheckPage() {
     );
   }, [currentHouse?.id, completedItems.length]);
 
+  const moveInPath = houseId
+    ? `/checklist/move-in?houseId=${houseId}`
+    : "/checklist/move-in";
+
   return (
     <div className="min-h-screen bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
       <div>
-        {/* 타이틀 */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 leading-snug">
             계약 하기전에
@@ -213,7 +238,6 @@ export default function ContractFinalCheckPage() {
             이것만큼은 <span className="text-emerald-500">꼭 확인하세요!</span>
           </h1>
 
-          {/* 완료 개수 */}
           <div className="mt-4">
             <span className="font-bold text-gray-900 text-[16px]">
               {completedItems.length}/{CHECKLIST_ITEMS.length} 완료
@@ -221,7 +245,6 @@ export default function ContractFinalCheckPage() {
           </div>
         </div>
 
-        {/* 체크리스트 카드 */}
         <div className="flex flex-col space-y-3">
           {sortedItems.map((item) => {
             const isCompleted = completedItems.includes(item.id);
@@ -248,7 +271,6 @@ export default function ContractFinalCheckPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center space-x-4 min-w-0 flex-1">
-                    {/* 아이콘 */}
                     <div
                       className={`
                         w-12
@@ -278,7 +300,6 @@ export default function ContractFinalCheckPage() {
                       )}
                     </div>
 
-                    {/* 텍스트 */}
                     <div className="min-w-0 flex-1">
                       <span
                         className={`
@@ -303,7 +324,6 @@ export default function ContractFinalCheckPage() {
                     </div>
                   </div>
 
-                  {/* 체크 */}
                   <div
                     className={`
                       w-7
@@ -327,7 +347,6 @@ export default function ContractFinalCheckPage() {
                   </div>
                 </div>
 
-                {/* 자세히 보기 */}
                 <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
                   <button
                     type="button"
@@ -351,9 +370,9 @@ export default function ContractFinalCheckPage() {
         </div>
       </div>
 
-      {/* 하단 버튼 */}
       <div className="mt-8 flex gap-3">
         <button
+          type="button"
           onClick={() => navigate(-1)}
           className="flex-1 py-4 bg-[#EAFEF1] text-[#26D383] font-bold text-lg rounded-2xl"
         >
@@ -361,7 +380,8 @@ export default function ContractFinalCheckPage() {
         </button>
 
         <button
-          onClick={() => navigate("/checklist/move-in")}
+          type="button"
+          onClick={() => navigate(moveInPath)}
           className="flex-1 py-4 text-white bg-[#26D383] font-bold text-lg rounded-2xl"
         >
           확인

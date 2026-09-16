@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const CHECKLISTS = [
   { label: "집 보러 가기 전", to: "/checklist/before-visit" },
@@ -10,8 +10,24 @@ const CHECKLISTS = [
 ];
 
 export default function ChecklistHubPage() {
+  const [searchParams] = useSearchParams();
+
+  const houseId = searchParams.get("houseId");
+
+  const getPath = (path) => {
+    if (!houseId) {
+      return path;
+    }
+
+    if (path === "/admin") {
+      return `${path}?houseId=${houseId}`;
+    }
+
+    return `${path}?houseId=${houseId}`;
+  };
+
   return (
-    <div className=" bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-start">
+    <div className="bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-start">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 leading-tight">
           어떤 체크리스트를
@@ -28,7 +44,7 @@ export default function ChecklistHubPage() {
         {CHECKLISTS.map((c) => (
           <Link
             key={c.to}
-            to={c.to}
+            to={getPath(c.to)}
             className="w-full py-4 px-6 bg-[#F8F9FA] hover:bg-[#F1F3F5] active:scale-[0.98] text-gray-900 font-semibold text-center rounded-2xl transition-all duration-150"
           >
             {c.label}

@@ -6,7 +6,6 @@ export default function RecommendedChecklist() {
   const navigate = useNavigate();
   const { houses } = useHouse();
 
-  // 진행 중인 집 찾기
   const ongoingHouse = houses.find((house) => {
     const checked = Number(house.checked || 0);
     const total = Number(house.totalInspection || 0);
@@ -14,7 +13,6 @@ export default function RecommendedChecklist() {
     return total > 0 && checked < total;
   });
 
-  // 진행 중인 집이 없을 때
   if (!ongoingHouse) {
     return (
       <div className="mx-4 rounded-2xl bg-gray-50 p-4">
@@ -57,7 +55,6 @@ export default function RecommendedChecklist() {
 
   const checkItems = ongoingHouse.checkItems || [];
 
-  // 단계별 체크리스트를 숫자로 분석
   const getProgress = (item) => {
     if (!item?.value) {
       return {
@@ -78,14 +75,12 @@ export default function RecommendedChecklist() {
     };
   };
 
-  // 아직 완료되지 않은 가장 앞 단계 찾기
   const recommendedIndex = checkItems.findIndex((item) => {
     const { current, total } = getProgress(item);
 
     return total > 0 && current < total;
   });
 
-  // 모든 체크리스트가 완료된 경우
   const allCompleted =
     checkItems.length > 0 &&
     checkItems.every((item) => {
@@ -94,16 +89,13 @@ export default function RecommendedChecklist() {
       return total > 0 && current >= total;
     });
 
-  // 추천 단계
   const recommendedItem =
     recommendedIndex >= 0 ? checkItems[recommendedIndex] : null;
 
-  // 추천 단계가 없으면 첫 번째 항목 사용
   const fallbackItem = checkItems[0];
 
   const currentItem = recommendedItem || fallbackItem;
 
-  // 현재 단계 기준으로 보여줄 항목
   const recommendedItems = currentItem
     ? checkItems
         .slice(
@@ -113,19 +105,26 @@ export default function RecommendedChecklist() {
         .filter(Boolean)
     : [];
 
+  const getPathWithHouseId = (path) => {
+    if (!path) {
+      return `/checklist?houseId=${ongoingHouse.id}`;
+    }
+
+    return `${path}?houseId=${ongoingHouse.id}`;
+  };
+
   const handleItemClick = (item) => {
     if (item?.path) {
-      navigate(item.path);
+      navigate(getPathWithHouseId(item.path));
     }
   };
 
   const handleAllClick = () => {
-    navigate("/checklist");
+    navigate(`/checklist?houseId=${ongoingHouse.id}`);
   };
 
   return (
     <div className="mx-4 rounded-2xl bg-gray-50 p-4">
-      {/* 헤더 */}
       <div className="flex items-center justify-between">
         <p className="font-bold text-[15px] text-gray-900">
           지금 확인하면 좋아요
@@ -145,14 +144,12 @@ export default function RecommendedChecklist() {
         </span>
       </div>
 
-      {/* 설명 */}
       <p className="text-[12px] text-gray-400 mt-1">
         {allCompleted
           ? "모든 체크리스트를 완료했어요."
           : "현재 진행도에 맞춰 다음 항목을 추천해드려요."}
       </p>
 
-      {/* 모든 체크 완료 */}
       {allCompleted ? (
         <div
           className="
@@ -189,19 +186,20 @@ export default function RecommendedChecklist() {
         </div>
       ) : (
         <>
-          {/* 추천 항목 */}
           <div className="flex flex-col gap-2 mt-3">
             {recommendedItems.map((item, index) => {
-              const { current, total, percent } = getProgress(item);
-
-              const isCurrent = item === currentItem;
+              const { current, total } = getProgress(item);
 
               const isComplete = total > 0 && current >= total;
 
+              const isCurrent =
+                recommendedIndex >= 0 &&
+                checkItems[recommendedIndex]?.title === item.title;
+
               return (
                 <button
-                  key={`${item.title}-${index}`}
                   type="button"
+                  key={`${item.title}-${index}`}
                   onClick={() => handleItemClick(item)}
                   className="
                     w-full
@@ -228,7 +226,6 @@ export default function RecommendedChecklist() {
                         {item.title}
                       </span>
 
-                      {/* 현재 추천 단계 */}
                       {isCurrent && (
                         <span
                           className="
@@ -254,50 +251,33 @@ export default function RecommendedChecklist() {
                         </span>
                       ) : (
                         <span className="text-[11px] text-gray-400">
-                          {item.type === "binary" ? "미확인" : `${current}/${total}`}
+                          {item.type === "binary"
+                            ? "미확인"
+                            : `${current}/${total}`}
                         </span>
                       )}
 
                       <ChevronRight size={15} className="text-gray-300" />
                     </div>
                   </div>
-
-                  {/* 진행 중인 단계만 진행률 표시 */}
-                  {isCurrent && total > 0 && (
-                    <div className="mt-2">
-                      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="
-                            h-full
-                            bg-[#26D383]
-                            rounded-full
-                            transition-all
-                          "
-                          style={{
-                            width: `${percent}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
                 </button>
               );
             })}
           </div>
 
-          {/* 전체 보기 */}
           <button
             type="button"
             onClick={handleAllClick}
             className="
               w-full
-              text-center
+              mt-3
+              py-3
               text-[12px]
               text-gray-400
-              mt-3
+              font-medium
             "
           >
-            모든 항목 보기
+            전체 체크리스트 보기
             <ChevronRight size={14} className="inline-block ml-0.5" />
           </button>
         </>

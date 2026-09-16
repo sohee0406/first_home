@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Building2, MoreHorizontal, AlertTriangle, X } from "lucide-react";
 
 import { useHouse } from "../../house/context/HouseContext";
 import { parseManwon } from "../../../utils/formatCurrency";
 
-// 체크리스트 항목별 진행률(%) 계산
 function getItemPercent(checkItems, title) {
   const item = (checkItems || []).find((i) => i.title === title);
 
@@ -21,26 +20,39 @@ function getItemPercent(checkItems, title) {
 
 export default function MoveInCheckPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { houses, updateChecklistProgress } = useHouse();
 
   const [showAlert, setShowAlert] = useState(true);
 
-  // 진행 중인 집(없으면 첫 번째 집)을 기준으로 보여준다
+  const searchParams = new URLSearchParams(location.search);
+  const houseId = searchParams.get("houseId");
+
   const currentHouse = useMemo(() => {
     if (!houses || houses.length === 0) {
       return null;
     }
 
-    return (
-      houses.find((house) => {
-        const checked = Number(house.checked || 0);
-        const total = Number(house.totalInspection || 0);
+    if (houseId) {
+      const selectedHouse = houses.find(
+        (house) => String(house.id) === String(houseId),
+      );
 
-        return checked < total;
-      }) || houses[0]
-    );
-  }, [houses]);
+      if (selectedHouse) {
+        return selectedHouse;
+      }
+    }
+
+    const inProgressHouse = houses.find((house) => {
+      const checked = Number(house.checked || 0);
+      const total = Number(house.totalInspection || 0);
+
+      return checked < total;
+    });
+
+    return inProgressHouse || houses[houses.length - 1];
+  }, [houses, houseId]);
 
   const checkItems = currentHouse?.checkItems || [];
 
@@ -54,65 +66,81 @@ export default function MoveInCheckPage() {
     Number(currentHouse.checked || 0) >=
       Number(currentHouse.totalInspection || 0);
 
-  // 등록했던 집 금액을 기준으로 한 초기예상비용
   const estimatedCost = useMemo(() => {
-    const deposit = parseManwon(currentHouse?.deposit); // 보증금
-    const rent = parseManwon(currentHouse?.rent); // 월세
-    const maintenance = parseManwon(currentHouse?.maintenanceFee); // 관리비
+    const deposit = parseManwon(currentHouse?.deposit);
+    const rent = parseManwon(currentHouse?.rent);
+    const maintenance = parseManwon(currentHouse?.maintenanceFee);
 
-    // 중개보수는 등록 정보에 없어 환산보증금(보증금 + 월세x100) 기준으로 추정
     const convertedDeposit = deposit + rent * 100;
+
     const brokerageFee = Math.round(convertedDeposit * 0.004);
 
-    // 이사비도 등록 정보에 없어 평균값으로 추정
     const movingFee = 50;
 
     const total = deposit + rent + maintenance + brokerageFee + movingFee;
 
-    return { deposit, rent, maintenance, brokerageFee, movingFee, total };
+    return {
+      deposit,
+      rent,
+      maintenance,
+      brokerageFee,
+      movingFee,
+      total,
+    };
   }, [currentHouse?.deposit, currentHouse?.rent, currentHouse?.maintenanceFee]);
 
-  // 확인 버튼: 입주 전 체크리스트는 항목 개수가 아니라 확인/미확인으로만 관리
   const handleConfirm = () => {
     if (currentHouse) {
       updateChecklistProgress(currentHouse.id, "입주 후", 1, 1);
+    }
+
+    if (houseId) {
+      navigate(`/admin?houseId=${houseId}`);
+      return;
     }
 
     navigate("/admin");
   };
 
   return (
-    <div className=" bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
+    <div className="bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between min-h-screen">
       <div className="space-y-4">
-        {/* 1. 상단 빌라 정보 및 점검 현황 카드 */}
         <div className="bg-white p-5 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center space-x-3 min-w-0">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: "#EAFEF1", color: "#25D383" }}
+                style={{
+                  backgroundColor: "#EAFEF1",
+                  color: "#25D383",
+                }}
               >
                 <Building2 className="w-6 h-6" />
               </div>
+
               <h2 className="text-lg font-bold text-gray-900 truncate">
                 {currentHouse?.name || currentHouse?.address || "등록한 집"}
               </h2>
             </div>
+
             <span
               className="px-3 py-1 text-xs font-semibold rounded-full shrink-0"
-              style={{ backgroundColor: "#EAFEF1", color: "#25D383" }}
+              style={{
+                backgroundColor: "#EAFEF1",
+                color: "#25D383",
+              }}
             >
               {isAllComplete ? "점검 완료" : "점검 중"}
             </span>
           </div>
 
-          {/* 프로그레스 바 목록 */}
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-xs text-gray-600 mb-1">
                 <span>현장 점검</span>
                 <span className="font-semibold">{onSitePercent}%</span>
               </div>
+
               <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
@@ -120,7 +148,7 @@ export default function MoveInCheckPage() {
                     backgroundColor: "#25D383",
                     width: `${onSitePercent}%`,
                   }}
-                ></div>
+                />
               </div>
             </div>
 
@@ -129,6 +157,7 @@ export default function MoveInCheckPage() {
                 <span>계약 전 점검</span>
                 <span className="font-semibold">{contractPercent}%</span>
               </div>
+
               <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
@@ -136,7 +165,7 @@ export default function MoveInCheckPage() {
                     backgroundColor: "#25D383",
                     width: `${contractPercent}%`,
                   }}
-                ></div>
+                />
               </div>
             </div>
 
@@ -145,6 +174,7 @@ export default function MoveInCheckPage() {
                 <span>주변 환경</span>
                 <span className="font-semibold">{aroundPercent}%</span>
               </div>
+
               <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
@@ -152,19 +182,17 @@ export default function MoveInCheckPage() {
                     backgroundColor: "#25D383",
                     width: `${aroundPercent}%`,
                   }}
-                ></div>
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* 2. 예상 초기비용 카드 (등록한 집 금액 기준) */}
         <div className="bg-white p-5 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-base font-bold text-gray-900">
-              예상 초기비용
-            </h3>
-            <button className="text-gray-400">
+            <h3 className="text-base font-bold text-gray-900">예상 초기비용</h3>
+
+            <button type="button" className="text-gray-400" aria-label="더보기">
               <MoreHorizontal className="w-5 h-5" />
             </button>
           </div>
@@ -182,25 +210,28 @@ export default function MoveInCheckPage() {
                     {estimatedCost.deposit.toLocaleString("ko-KR")} 만원
                   </span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>월세</span>
                   <span className="font-semibold text-gray-900">
                     {estimatedCost.rent.toLocaleString("ko-KR")} 만원
                   </span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>관리비</span>
                   <span className="font-semibold text-gray-900">
                     {estimatedCost.maintenance.toLocaleString("ko-KR")} 만원
                   </span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>중개보수 (추정)</span>
                   <span className="font-semibold text-gray-900">
-                    약 {estimatedCost.brokerageFee.toLocaleString("ko-KR")}{" "}
-                    만원
+                    약 {estimatedCost.brokerageFee.toLocaleString("ko-KR")} 만원
                   </span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>이사비 (추정)</span>
                   <span className="font-semibold text-gray-900">
@@ -210,6 +241,7 @@ export default function MoveInCheckPage() {
 
                 <div className="border-t border-gray-100 pt-3 mt-3 flex justify-between font-bold text-gray-900 text-base">
                   <span>예상 필요 금액</span>
+
                   <span style={{ color: "#25D383" }}>
                     약 {estimatedCost.total.toLocaleString("ko-KR")} 만원
                   </span>
@@ -221,6 +253,7 @@ export default function MoveInCheckPage() {
               <p className="text-[13px] text-gray-400">
                 등록된 집이 없어 초기비용을 계산할 수 없어요.
               </p>
+
               <button
                 type="button"
                 onClick={() => navigate("/houses/register")}
@@ -232,25 +265,29 @@ export default function MoveInCheckPage() {
           )}
         </div>
 
-        {/* 3. 확인 필요 항목 경고 배너 */}
         {showAlert && (
           <div className="bg-rose-50/70 border border-rose-100 p-4 rounded-2xl relative shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
             <div className="flex items-start space-x-3">
               <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-rose-600 text-sm">
-                    확인 필요항목 3개
+                    확인 필요 항목 3개
                   </span>
+
                   <button
+                    type="button"
                     onClick={() => setShowAlert(false)}
                     className="text-rose-400"
+                    aria-label="닫기"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="text-xs text-rose-500 mt-1">
-                  근저당 설정, 여부보증금 관련 특약, 공과금 납부 여부
+
+                <p className="text-[12px] leading-relaxed text-rose-400 mt-2">
+                  전입신고, 확정일자, 임대차 신고 여부를 확인해주세요.
                 </p>
               </div>
             </div>
@@ -258,20 +295,13 @@ export default function MoveInCheckPage() {
         )}
       </div>
 
-      {/* 4. 하단 버튼 영역 */}
-      <div className="mt-8 flex gap-3">
+      <div className="mt-8">
         <button
-          onClick={() => navigate(-1)}
-          className="flex-1 py-4 bg-[#EAFEF1] text-[#26D383] font-bold text-lg rounded-2xl"
-        >
-          이전
-        </button>
-
-        <button
+          type="button"
           onClick={handleConfirm}
-          className="flex-1 py-4 text-white bg-[#26D383] font-bold text-lg rounded-2xl"
+          className="w-full bg-[#26D383] text-white rounded-2xl py-4 font-bold text-[16px]"
         >
-          확인
+          입주 확인 완료
         </button>
       </div>
     </div>

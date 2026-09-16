@@ -6,7 +6,6 @@ export default function OngoingHouseCard() {
   const navigate = useNavigate();
   const { houses } = useHouse();
 
-  // 아직 체크가 끝나지 않은 집만 진행 중인 집으로 판단
   const ongoingHouse = houses.find((house) => {
     const checked = Number(house.checked || 0);
     const total = Number(house.totalInspection || 0);
@@ -14,7 +13,6 @@ export default function OngoingHouseCard() {
     return total > 0 && checked < total;
   });
 
-  // 진행 중인 집이 없을 때
   if (!ongoingHouse) {
     return (
       <div className="mx-4 rounded-2xl bg-green-50 p-5">
@@ -59,7 +57,6 @@ export default function OngoingHouseCard() {
 
   const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
 
-  // 진행 중인 집의 체크리스트 중 첫 번째 미완료 항목
   const checkItems = ongoingHouse.checkItems || [];
 
   const nextChecklist =
@@ -75,11 +72,11 @@ export default function OngoingHouseCard() {
     e.stopPropagation();
 
     if (nextChecklist?.path) {
-      navigate(nextChecklist.path);
+      navigate(`${nextChecklist.path}?houseId=${ongoingHouse.id}`);
       return;
     }
 
-    navigate("/checklist");
+    navigate(`/checklist?houseId=${ongoingHouse.id}`);
   };
 
   return (
@@ -95,7 +92,6 @@ export default function OngoingHouseCard() {
       "
       onClick={handleHouseClick}
     >
-      {/* 진행 중인 집 */}
       <span
         className="
           inline-flex
@@ -110,19 +106,16 @@ export default function OngoingHouseCard() {
         진행 중인 집
       </span>
 
-      {/* 집 이름 */}
       <p className="font-bold text-[17px] mt-2 text-gray-900">
         {ongoingHouse.name || "등록한 집"}
       </p>
 
-      {/* 주소 */}
       {ongoingHouse.address && (
         <p className="text-[12px] text-gray-400 mt-1 truncate">
           {ongoingHouse.address}
         </p>
       )}
 
-      {/* 체크 진행률 */}
       <div
         className="
           bg-white
@@ -164,7 +157,6 @@ export default function OngoingHouseCard() {
         </div>
       </div>
 
-      {/* 체크리스트 바로가기 */}
       <button
         type="button"
         className="
