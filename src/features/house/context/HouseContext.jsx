@@ -18,34 +18,39 @@ const DEFAULT_CHECK_ITEMS = [
   {
     title: "주변 점검",
     status: "progress",
-    value: "0/6",
+    value: "0/1",
     path: "/checklist/around",
     checked: 0,
-    total: 6,
+    total: 1,
+    // 하위 항목 개수가 아니라 확인/미확인만 있는 체크리스트
+    type: "binary",
   },
   {
     title: "현장 점검",
     status: "progress",
-    value: "0/22",
+    value: "0/0",
     path: "/checklist/on-site",
     checked: 0,
-    total: 22,
+    // 필수확인에 추가한 항목 수에 따라 실제 값으로 갱신됨
+    total: 0,
   },
   {
     title: "계약 전",
     status: "progress",
-    value: "0/8",
+    value: "0/5",
     path: "/checklist/contract-final",
     checked: 0,
-    total: 8,
+    total: 5,
   },
   {
     title: "입주 후",
     status: "progress",
-    value: "0/5",
+    value: "0/1",
     path: "/checklist/move-in",
     checked: 0,
-    total: 5,
+    total: 1,
+    // 하위 항목 개수가 아니라 확인/미확인만 있는 체크리스트
+    type: "binary",
   },
 ];
 
@@ -84,9 +89,15 @@ export function HouseProvider({ children }) {
           };
         }
 
-        const checked = Number(savedItem.checked || 0);
+        const isBinary = defaultItem.type === "binary";
 
-        const total = Number(savedItem.total || defaultItem.total);
+        const rawChecked = Number(savedItem.checked || 0);
+
+        const total = isBinary
+          ? 1
+          : Number(savedItem.total || defaultItem.total);
+
+        const checked = isBinary ? (rawChecked > 0 ? 1 : 0) : rawChecked;
 
         return {
           ...defaultItem,
@@ -94,7 +105,7 @@ export function HouseProvider({ children }) {
           checked,
           total,
           value: `${checked}/${total}`,
-          status: checked >= total ? "complete" : "progress",
+          status: total > 0 && checked >= total ? "complete" : "progress",
         };
       });
 
@@ -203,19 +214,27 @@ export function HouseProvider({ children }) {
               return item;
             }
 
-            const safeTotal = Number(total) || Number(item.total) || 0;
+            const isBinary = item.type === "binary";
 
-            const safeChecked = Math.min(
-              Math.max(Number(checked) || 0, 0),
-              safeTotal,
-            );
+            const safeTotal = isBinary
+              ? 1
+              : Number(total) || Number(item.total) || 0;
+
+            const rawChecked = Number(checked) || 0;
+
+            const safeChecked = isBinary
+              ? (rawChecked > 0 ? 1 : 0)
+              : Math.min(Math.max(rawChecked, 0), safeTotal);
 
             return {
               ...item,
               checked: safeChecked,
               total: safeTotal,
               value: `${safeChecked}/${safeTotal}`,
-              status: safeChecked >= safeTotal ? "complete" : "progress",
+              status:
+                safeTotal > 0 && safeChecked >= safeTotal
+                  ? "complete"
+                  : "progress",
             };
           })
         : DEFAULT_CHECK_ITEMS;

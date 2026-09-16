@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus, X, MapPin } from "lucide-react";
 import KakaoAroundMap from "../components/KakaoAroundMap";
@@ -6,9 +6,25 @@ import { useHouse } from "../../house/context/HouseContext";
 
 export default function AroundCheckPage() {
   const navigate = useNavigate();
-  const { houses } = useHouse();
+  const { houses, updateChecklistProgress } = useHouse();
 
   const latestHouse = houses?.length > 0 ? houses[houses.length - 1] : null;
+
+  // 현재 진행 중인 집(체크리스트 진행 상태를 반영할 대상)
+  const currentHouse = useMemo(() => {
+    if (!houses || houses.length === 0) {
+      return null;
+    }
+
+    return (
+      houses.find((house) => {
+        const checked = Number(house.checked || 0);
+        const total = Number(house.totalInspection || 0);
+
+        return checked < total;
+      }) || houses[0]
+    );
+  }, [houses]);
 
   const [address, setAddress] = useState(latestHouse?.address || "");
 
@@ -85,6 +101,15 @@ export default function AroundCheckPage() {
 
   const handleCountsChange = (newCounts) => {
     setCounts(newCounts || {});
+  };
+
+  // 확인 버튼: 주변 점검은 항목 개수가 아니라 확인/미확인으로만 관리
+  const handleConfirm = () => {
+    if (currentHouse) {
+      updateChecklistProgress(currentHouse.id, "주변 점검", 1, 1);
+    }
+
+    navigate("/checklist/on-site");
   };
 
   return (
@@ -324,7 +349,7 @@ export default function AroundCheckPage() {
 
           <button
             type="button"
-            onClick={() => navigate("/checklist/on-site")}
+            onClick={handleConfirm}
             className="
               flex-1
               py-4

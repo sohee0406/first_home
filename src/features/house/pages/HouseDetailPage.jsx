@@ -146,7 +146,7 @@ export default function HouseDetailPage() {
 
   const checked = house.checked || 0;
 
-  const totalInspection = house.totalInspection || 22;
+  const totalInspection = house.totalInspection || 0;
 
   const progress =
     totalInspection > 0 ? Math.round((checked / totalInspection) * 100) : 0;
@@ -718,7 +718,9 @@ export default function HouseDetailPage() {
                             text-gray-500
                           "
                       >
-                        {item.value || "0/0"}
+                        {item.type === "binary"
+                          ? "미확인"
+                          : item.value || "0/0"}
                       </span>
                     )}
                   </div>

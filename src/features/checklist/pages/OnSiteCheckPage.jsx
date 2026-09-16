@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Check } from "lucide-react";
 
@@ -6,6 +6,22 @@ import {
   REQUIRED_CHECKLIST_KEY,
   ALL_ITEMS_FLAT,
 } from "../data/onSiteChecklistData";
+import { useHouse } from "../../house/context/HouseContext";
+
+// 필수확인 항목 중 완료(체크)한 항목을 저장하는 키
+const COMPLETED_STORAGE_KEY = "first_home_onsite_completed_checklist";
+
+function loadCompletedItems() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(COMPLETED_STORAGE_KEY) || "[]",
+    );
+
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
 
 // ==========================================
 // 상단 탭
@@ -40,15 +56,35 @@ const TABS = [
 export default function OnSiteCheckPage() {
   const navigate = useNavigate();
 
+  const { houses, updateChecklistProgress } = useHouse();
+
   // ==========================================
   // 필수 체크된 항목
   // ==========================================
   const [requiredItems, setRequiredItems] = useState([]);
 
   // ==========================================
-  // 완료된 항목
+  // 완료된 항목 (새로고침/재방문해도 유지되도록 저장)
   // ==========================================
-  const [completedItems, setCompletedItems] = useState([]);
+  const [completedItems, setCompletedItems] = useState(() =>
+    loadCompletedItems(),
+  );
+
+  // 현재 진행 중인 집(체크리스트 진행 상태를 반영할 대상)
+  const currentHouse = useMemo(() => {
+    if (!houses || houses.length === 0) {
+      return null;
+    }
+
+    return (
+      houses.find((house) => {
+        const checked = Number(house.checked || 0);
+        const total = Number(house.totalInspection || 0);
+
+        return checked < total;
+      }) || houses[0]
+    );
+  }, [houses]);
 
   // ==========================================
   // localStorage에서 필수 항목 불러오기
@@ -164,6 +200,37 @@ export default function OnSiteCheckPage() {
   const checkedCount = completedItems.filter((id) =>
     requiredItems.includes(id),
   ).length;
+
+  // ==========================================
+  // 완료 상태를 로컬스토리지에 저장
+  // ==========================================
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        COMPLETED_STORAGE_KEY,
+        JSON.stringify(completedItems),
+      );
+    } catch (error) {
+      console.error("현장 점검 완료 상태 저장 실패:", error);
+    }
+  }, [completedItems]);
+
+  // ==========================================
+  // 필수확인 진행 상태를 HouseContext에 반영
+  // (총 개수 = 필수확인에 추가한 항목 수)
+  // ==========================================
+  useEffect(() => {
+    if (!currentHouse) {
+      return;
+    }
+
+    updateChecklistProgress(
+      currentHouse.id,
+      "현장 점검",
+      checkedCount,
+      totalCount,
+    );
+  }, [currentHouse?.id, checkedCount, totalCount]);
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-sm pb-24">

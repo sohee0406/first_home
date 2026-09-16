@@ -1,6 +1,23 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Check } from "lucide-react";
+
+import { useHouse } from "../../house/context/HouseContext";
+
+// 계약 전 체크리스트 완료 상태를 저장하는 키
+const COMPLETED_STORAGE_KEY = "first_home_contract_final_checklist";
+
+function loadCompletedItems() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(COMPLETED_STORAGE_KEY) || "[]",
+    );
+
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
 
 const CHECKLIST_ITEMS = [
   {
@@ -113,7 +130,27 @@ const CHECKLIST_ITEMS = [
 export default function ContractFinalCheckPage() {
   const navigate = useNavigate();
 
-  const [completedItems, setCompletedItems] = useState([]);
+  const { houses, updateChecklistProgress } = useHouse();
+
+  const [completedItems, setCompletedItems] = useState(() =>
+    loadCompletedItems(),
+  );
+
+  // 현재 진행 중인 집(체크리스트 진행 상태를 반영할 대상)
+  const currentHouse = useMemo(() => {
+    if (!houses || houses.length === 0) {
+      return null;
+    }
+
+    return (
+      houses.find((house) => {
+        const checked = Number(house.checked || 0);
+        const total = Number(house.totalInspection || 0);
+
+        return checked < total;
+      }) || houses[0]
+    );
+  }, [houses]);
 
   const handleItemClick = (id) => {
     setCompletedItems((prev) => {
@@ -138,6 +175,32 @@ export default function ContractFinalCheckPage() {
 
     return aCompleted ? 1 : -1;
   });
+
+  // 완료 상태를 로컬스토리지에 저장
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        COMPLETED_STORAGE_KEY,
+        JSON.stringify(completedItems),
+      );
+    } catch (error) {
+      console.error("계약 전 체크리스트 저장 실패:", error);
+    }
+  }, [completedItems]);
+
+  // 계약 전 진행 상태를 HouseContext에 반영
+  useEffect(() => {
+    if (!currentHouse) {
+      return;
+    }
+
+    updateChecklistProgress(
+      currentHouse.id,
+      "계약 전",
+      completedItems.length,
+      CHECKLIST_ITEMS.length,
+    );
+  }, [currentHouse?.id, completedItems.length]);
 
   return (
     <div className="min-h-screen bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">

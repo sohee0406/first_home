@@ -254,7 +254,7 @@ export default function RecommendedChecklist() {
                         </span>
                       ) : (
                         <span className="text-[11px] text-gray-400">
-                          {current}/{total}
+                          {item.type === "binary" ? "미확인" : `${current}/${total}`}
                         </span>
                       )}
 
