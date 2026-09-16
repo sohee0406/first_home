@@ -22,7 +22,6 @@ const DEFAULT_CHECK_ITEMS = [
     path: "/checklist/around",
     checked: 0,
     total: 1,
-    // 하위 항목 개수가 아니라 확인/미확인만 있는 체크리스트
     type: "binary",
   },
   {
@@ -31,7 +30,6 @@ const DEFAULT_CHECK_ITEMS = [
     value: "0/0",
     path: "/checklist/on-site",
     checked: 0,
-    // 필수확인에 추가한 항목 수에 따라 실제 값으로 갱신됨
     total: 0,
   },
   {
@@ -43,13 +41,12 @@ const DEFAULT_CHECK_ITEMS = [
     total: 5,
   },
   {
-    title: "입주 후",
+    title: "입주 전",
     status: "progress",
     value: "0/1",
     path: "/checklist/move-in",
     checked: 0,
     total: 1,
-    // 하위 항목 개수가 아니라 확인/미확인만 있는 체크리스트
     type: "binary",
   },
 ];
@@ -110,7 +107,6 @@ export function HouseProvider({ children }) {
       });
 
       const totalChecked = getTotalChecked(mergedCheckItems);
-
       const totalCount = getTotalCount(mergedCheckItems);
 
       return {
@@ -130,7 +126,7 @@ export function HouseProvider({ children }) {
     });
   });
 
-  // houses가 변경될 때 localStorage 저장
+  // houses 변경 시 localStorage 저장
   const saveHouses = (nextHouses) => {
     setHouses(nextHouses);
     saveToStorage(STORAGE_KEY, nextHouses);
@@ -173,13 +169,29 @@ export function HouseProvider({ children }) {
     saveHouses(nextHouses);
   };
 
-  // 집 정보 수정
+  // 집 정보 전체 수정
   const updateHouse = (houseId, updatedData) => {
     const nextHouses = houses.map((house) =>
       house.id === houseId
         ? {
             ...house,
             ...updatedData,
+          }
+        : house,
+    );
+
+    saveHouses(nextHouses);
+  };
+
+  // 집 이름만 수정
+  const updateHouseName = (houseId, name) => {
+    const trimmedName = String(name || "").trim();
+
+    const nextHouses = houses.map((house) =>
+      house.id === houseId
+        ? {
+            ...house,
+            name: trimmedName,
           }
         : house,
     );
@@ -223,7 +235,9 @@ export function HouseProvider({ children }) {
             const rawChecked = Number(checked) || 0;
 
             const safeChecked = isBinary
-              ? (rawChecked > 0 ? 1 : 0)
+              ? rawChecked > 0
+                ? 1
+                : 0
               : Math.min(Math.max(rawChecked, 0), safeTotal);
 
             return {
@@ -240,7 +254,6 @@ export function HouseProvider({ children }) {
         : DEFAULT_CHECK_ITEMS;
 
       const totalChecked = getTotalChecked(nextCheckItems);
-
       const totalCount = getTotalCount(nextCheckItems);
 
       return {
@@ -266,6 +279,7 @@ export function HouseProvider({ children }) {
         addHouse,
         deleteHouse,
         updateHouse,
+        updateHouseName,
         toggleWish,
         updateChecklistProgress,
       }}

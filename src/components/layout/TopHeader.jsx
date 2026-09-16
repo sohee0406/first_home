@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, X, House, ClipboardCheck, FileText, User } from "lucide-react";
+import logo from "../../img/logo.png";
 
 // 홈 등 최상위 화면 상단에 쓰이는 로고 + 메뉴 헤더
 export default function TopHeader() {
@@ -40,17 +41,15 @@ export default function TopHeader() {
       {/* 상단 헤더 */}
       <header className="flex items-center justify-between px-4 py-3 bg-white">
         {/* 로고 */}
-        <div className="flex items-center gap-1">
-          <div className="w-7 h-7 bg-green-500 rounded-lg" />
-
-          <span className="font-bold text-sm">첫집</span>
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="첫집 로고" className="w-8 h-8 object-contain" />
         </div>
 
         {/* 햄버거 메뉴 */}
         <button
           type="button"
           onClick={() => setIsMenuOpen(true)}
-          className="w-9 h-9 flex items-center justify-center rounded-full"
+          className="w-10 h-10 flex items-center justify-center rounded-full"
           aria-label="메뉴 열기"
         >
           <Menu size={22} className="text-gray-700" />

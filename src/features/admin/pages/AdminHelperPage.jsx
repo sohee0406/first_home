@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Check, ExternalLink } from "lucide-react";
+
+const ADDRESS_CHECK_STORAGE_KEY = "firstHomeAddressCheck";
 
 export default function AdminHelperPage() {
   const navigate = useNavigate();
@@ -8,11 +10,12 @@ export default function AdminHelperPage() {
   // 생활 정리 탭 상태
   const [activeTab, setActiveTab] = useState("전기");
 
-  // 주소변경 체크리스트 상태
+  // 주소변경 체크리스트
+  // 처음 방문했을 때는 전부 체크되지 않은 상태
   const [addressCheck, setAddressCheck] = useState({
-    bank: true,
-    telecom: true,
-    insurance: true,
+    bank: false,
+    telecom: false,
+    insurance: false,
     company: false,
     mail: false,
   });
@@ -23,11 +26,46 @@ export default function AdminHelperPage() {
   // 전체보기 토글 상태
   const [showAllTasks, setShowAllTasks] = useState(false);
 
+  // 로컬스토리지에 저장된 체크 상태 불러오기
+  useEffect(() => {
+    try {
+      const savedAddressCheck = localStorage.getItem(ADDRESS_CHECK_STORAGE_KEY);
+
+      if (savedAddressCheck) {
+        const parsedAddressCheck = JSON.parse(savedAddressCheck);
+
+        setAddressCheck({
+          bank: Boolean(parsedAddressCheck.bank),
+          telecom: Boolean(parsedAddressCheck.telecom),
+          insurance: Boolean(parsedAddressCheck.insurance),
+          company: Boolean(parsedAddressCheck.company),
+          mail: Boolean(parsedAddressCheck.mail),
+        });
+      }
+    } catch (error) {
+      console.error("주소변경 체크 상태를 불러오지 못했습니다.", error);
+    }
+  }, []);
+
+  // 체크 상태 변경 + 로컬스토리지 저장
   const toggleAddressCheck = (key) => {
-    setAddressCheck((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setAddressCheck((prev) => {
+      const updatedAddressCheck = {
+        ...prev,
+        [key]: !prev[key],
+      };
+
+      try {
+        localStorage.setItem(
+          ADDRESS_CHECK_STORAGE_KEY,
+          JSON.stringify(updatedAddressCheck),
+        );
+      } catch (error) {
+        console.error("주소변경 체크 상태를 저장하지 못했습니다.", error);
+      }
+
+      return updatedAddressCheck;
+    });
   };
 
   // 생활 정리 탭별 안내 텍스트

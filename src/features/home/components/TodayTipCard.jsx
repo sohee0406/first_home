@@ -9,7 +9,7 @@ export default function TodayTipCard() {
     <div className="relative bg-gray-50 rounded-2xl p-4 mx-4">
       <p className="font-bold flex items-center gap-1">
         <Lightbulb size={18} className="text-yellow-400" />
-        오늘의 자취 <span className="text-green-500">TIP</span>
+        오늘의 자취 <span className="text-yellow-400">TIP</span>
       </p>
       <p className="text-sm mt-2 leading-snug">
         계약 전 등기부등본에서 소유자와
