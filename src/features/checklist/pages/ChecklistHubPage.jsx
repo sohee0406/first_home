@@ -27,7 +27,7 @@ export default function ChecklistHubPage() {
   };
 
   return (
-    <div className="bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-start">
+    <div className="bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-start">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 leading-tight">
           어떤 체크리스트를

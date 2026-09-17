@@ -30,7 +30,7 @@ export default function HouseDetailPage() {
 
   if (!house) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-5 text-center">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
         <p className="text-[17px] font-bold text-gray-800">
           등록된 집을 찾을 수 없어요
         </p>
@@ -359,7 +359,7 @@ export default function HouseDetailPage() {
         </div>
       </section>
 
-      <section className="px-5 mt-6">
+      <section className="px-4 mt-6">
         <p
           className="
             text-[21px]
@@ -401,7 +401,7 @@ export default function HouseDetailPage() {
         )}
       </section>
 
-      <section className="px-5 mt-7">
+      <section className="px-4 mt-7">
         <div className="grid grid-cols-3 text-center">
           {/* 보증금 */}
           <div>
@@ -507,7 +507,7 @@ export default function HouseDetailPage() {
       </section>
 
       {house.amenities?.length > 0 && (
-        <section className="px-5 mt-8">
+        <section className="px-4 mt-8">
           <h2 className="text-[16px] font-bold text-gray-900">옵션</h2>
 
           <div className="flex flex-wrap gap-2 mt-4">
@@ -668,7 +668,7 @@ export default function HouseDetailPage() {
                       w-full
                       flex
                       items-center
-                      px-5
+                      px-4
                       py-4
                       text-left
                       transition-colors
@@ -730,7 +730,7 @@ export default function HouseDetailPage() {
           ) : (
             <div
               className="
-                px-5
+                px-4
                 py-8
                 text-center
               "
@@ -835,7 +835,7 @@ export default function HouseDetailPage() {
               max-w-md
               bg-white
               rounded-t-2xl
-              px-5
+              px-4
               pt-5
               pb-8
               max-h-[90vh]

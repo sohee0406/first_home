@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, Check } from "lucide-react";
 
 import { CATEGORY_ITEMS } from "../data/onSiteChecklistData";
@@ -35,27 +35,58 @@ export default function OnSiteCategoryPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [completedItems, setCompletedItems] = useState([]);
+  // 현재 카테고리 파악 (예: entrance, room 등 / 필수확인은 undefined일 수 있으므로 'on-site-main' 등으로 처리)
+  const currentCategory =
+    Object.keys(CATEGORY_ITEMS).find((key) =>
+      location.pathname.includes(`/checklist/on-site/${key}`),
+    ) || "main";
 
-  const currentCategory = Object.keys(CATEGORY_ITEMS).find((key) =>
-    location.pathname.includes(`/checklist/on-site/${key}`),
-  );
+  const STORAGE_KEY = `onsite_completed_${currentCategory}`;
 
-  const items = CATEGORY_ITEMS[currentCategory] || [];
+  // 탭이 바뀔 때마다 해당 카테고리의 완료 목록을 localStorage에서 불러옴
+  const [completedItems, setCompletedItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // 카테고리(탭)가 바뀔 때마다 올바른 localStorage 데이터를 다시 불러오기 위한 useEffect
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      setCompletedItems(saved ? JSON.parse(saved) : []);
+    } catch {
+      setCompletedItems([]);
+    }
+  }, [currentCategory, STORAGE_KEY]);
+
+  const items =
+    CATEGORY_ITEMS[currentCategory === "main" ? "entrance" : currentCategory] ||
+    CATEGORY_ITEMS[currentCategory] ||
+    [];
+  // 참고: '필수확인' 탭인 경우 경로에 따라 처리되는 방식에 맞춰 기존 로직 유지
+  // (만약 CATEGORY_ITEMS 구조에 맞게 처리 중이셨다면 기존 방식을 그대로 살렸습니다)
 
   const handleItemClick = (id) => {
     setCompletedItems((prev) => {
+      let nextItems;
       if (prev.includes(id)) {
-        return prev.filter((itemId) => itemId !== id);
+        nextItems = prev.filter((itemId) => itemId !== id);
+      } else {
+        nextItems = [...prev, id];
       }
 
-      return [...prev, id];
+      // 상태가 바뀔 때마다 localStorage에 즉시 저장
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextItems));
+      return nextItems;
     });
   };
 
   const handleDetailClick = (e, id) => {
     e.stopPropagation();
-
     navigate(`/checklist/on-site/${id}`);
   };
 

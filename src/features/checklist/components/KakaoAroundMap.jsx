@@ -421,7 +421,7 @@ export default function KakaoAroundMap({
       />
 
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-100 px-5 text-center">
+        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-100 px-4 text-center">
           <p className="text-sm text-gray-500">{error}</p>
         </div>
       )}

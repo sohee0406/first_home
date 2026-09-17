@@ -29,7 +29,7 @@ export default function MyPage() {
   ).length;
 
   return (
-    <div className="max-w-md mx-auto px-5 py-6">
+    <div className="max-w-md mx-auto px-4 py-6">
       {/* 프로필 */}
       <ProfileCard name="김한국" />
 

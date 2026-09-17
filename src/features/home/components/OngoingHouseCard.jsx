@@ -34,7 +34,7 @@ export default function OngoingHouseCard() {
             onClick={() => navigate("/houses/register")}
             className="
               mt-4
-              px-5
+              px-4
               py-2.5
               rounded-xl
               bg-[#26D383]

@@ -229,7 +229,7 @@ export default function ContractFinalCheckPage() {
     : "/checklist/move-in";
 
   return (
-    <div className="min-h-screen bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
+    <div className="min-h-screen bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
       <div>
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 leading-snug">

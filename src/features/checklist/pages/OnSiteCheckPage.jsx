@@ -377,7 +377,7 @@ export default function OnSiteCheckPage() {
             );
           })
         ) : (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-5 py-12 text-center">
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-12 text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#EAFEF1] text-[#26D383]">
               ✓
             </div>

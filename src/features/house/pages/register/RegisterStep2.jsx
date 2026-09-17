@@ -223,7 +223,7 @@ export default function RegisterStep2({ formData, onNext }) {
           />
 
           {/* 바텀시트 */}
-          <div className="absolute bottom-0 left-0 w-full bg-white rounded-t-[28px] px-5 pt-5 pb-8 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] animate-[bottomSheetUp_0.35s_cubic-bezier(0.22,1,0.36,1)]">
+          <div className="absolute bottom-0 left-0 w-full bg-white rounded-t-[28px] px-4 pt-5 pb-8 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] animate-[bottomSheetUp_0.35s_cubic-bezier(0.22,1,0.36,1)]">
             {/* 드래그 핸들 */}
             <div className="flex justify-center mb-5">
               <div className="w-10 h-1 rounded-full bg-gray-200" />

@@ -244,7 +244,7 @@ export default function BeforeVisitPage() {
     <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col">
       <div className="flex-1">
         {/* 타이틀 */}
-        <section className="flex items-center gap-4 px-5 py-5">
+        <section className="flex items-center gap-4 px-4 py-5">
           <div
             className="
               w-16 h-16

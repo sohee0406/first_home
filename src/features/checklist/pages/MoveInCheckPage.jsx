@@ -66,6 +66,21 @@ export default function MoveInCheckPage() {
     Number(currentHouse.checked || 0) >=
       Number(currentHouse.totalInspection || 0);
 
+  // "입주 전" 항목은 제외하고, 미완료된 나머지 체크리스트 항목들만 필터링
+  const incompleteItems = useMemo(() => {
+    if (!checkItems || checkItems.length === 0) return [];
+
+    return checkItems.filter((item) => {
+      if (item.title && item.title.includes("입주 전")) {
+        return false;
+      }
+
+      const total = Number(item.total || 0);
+      const checked = Number(item.checked || 0);
+      return total > 0 && checked < total;
+    });
+  }, [checkItems]);
+
   const estimatedCost = useMemo(() => {
     const deposit = parseManwon(currentHouse?.deposit);
     const rent = parseManwon(currentHouse?.rent);
@@ -91,7 +106,7 @@ export default function MoveInCheckPage() {
 
   const handleConfirm = () => {
     if (currentHouse) {
-      updateChecklistProgress(currentHouse.id, "입주 후", 1, 1);
+      updateChecklistProgress(currentHouse.id, "입주 전", 1, 1);
     }
 
     if (houseId) {
@@ -103,7 +118,7 @@ export default function MoveInCheckPage() {
   };
 
   return (
-    <div className="bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between min-h-screen">
+    <div className="bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between min-h-screen">
       <div className="space-y-4">
         <div className="bg-white p-5 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
           <div className="flex items-center justify-between mb-5">
@@ -273,7 +288,7 @@ export default function MoveInCheckPage() {
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-rose-600 text-sm">
-                    확인 필요 항목 3개
+                    확인 필요 항목 {incompleteItems.length}개
                   </span>
 
                   <button
@@ -287,7 +302,24 @@ export default function MoveInCheckPage() {
                 </div>
 
                 <p className="text-[12px] leading-relaxed text-rose-400 mt-2">
-                  전입신고, 확정일자, 임대차 신고 여부를 확인해주세요.
+                  {incompleteItems.length > 0
+                    ? incompleteItems
+                        .map((item) => {
+                          const subList = item.subItems || item.details || [];
+                          const uncheckedSubs = subList.filter(
+                            (sub) => !sub.checked && !sub.isCompleted,
+                          );
+
+                          if (uncheckedSubs.length > 0) {
+                            const subNames = uncheckedSubs
+                              .map((sub) => sub.title || sub.name)
+                              .join(", ");
+                            return `${item.title} (${subNames})`;
+                          }
+                          return item.title;
+                        })
+                        .join(", ") + " 항목의 점검을 완료해주세요."
+                    : "모든 점검 항목을 완료하셨어요!"}
                 </p>
               </div>
             </div>

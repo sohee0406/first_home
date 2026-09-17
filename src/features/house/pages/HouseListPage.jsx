@@ -394,7 +394,7 @@ export default function HouseListPage() {
             flex
             items-center
             justify-center
-            px-5
+            px-4
           "
           onClick={() => {
             setEditingHouse(null);
@@ -515,7 +515,7 @@ export default function HouseListPage() {
             flex
             items-center
             justify-center
-            px-5
+            px-4
           "
           onClick={() => setDeletingHouse(null)}
         >

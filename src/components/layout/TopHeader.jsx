@@ -84,7 +84,7 @@ export default function TopHeader() {
         `}
       >
         {/* 메뉴 상단 */}
-        <div className="h-[60px] flex items-center justify-between px-5 border-b border-gray-100">
+        <div className="h-[60px] flex items-center justify-between px-4 border-b border-gray-100">
           {/* 로고 */}
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-green-500 rounded-lg" />
@@ -126,7 +126,7 @@ export default function TopHeader() {
         </nav>
 
         {/* 하단 안내 문구 */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-7">
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-7">
           <div className="rounded-xl bg-gray-50 p-4">
             <p className="text-[13px] font-semibold text-gray-700 mb-1">
               첫 자취, 어렵지 않게

@@ -89,7 +89,7 @@ export default function AdminHelperPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-5 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
+    <div className="min-h-screen bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
       <div className="space-y-6">
         {/* =========================
             1. 상단 타이틀

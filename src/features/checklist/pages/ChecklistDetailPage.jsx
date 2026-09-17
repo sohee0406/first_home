@@ -40,9 +40,13 @@ export default function ChecklistDetailPage() {
   const [showWarning, setShowWarning] = useState(true);
 
   // ==========================================
-  // 메모
+  // 메모 (localStorage 연동 적용)
   // ==========================================
-  const [memo, setMemo] = useState("");
+  const MEMO_STORAGE_KEY = `checklist_memo_${id}`;
+
+  const [memo, setMemo] = useState(() => {
+    return localStorage.getItem(MEMO_STORAGE_KEY) || "";
+  });
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoInput, setMemoInput] = useState("");
 
@@ -91,10 +95,12 @@ export default function ChecklistDetailPage() {
   };
 
   // ==========================================
-  // 메모 저장
+  // 메모 저장 (localStorage.setItem 적용)
   // ==========================================
   const handleSaveMemo = () => {
-    setMemo(memoInput.trim());
+    const trimmedMemo = memoInput.trim();
+    setMemo(trimmedMemo);
+    localStorage.setItem(MEMO_STORAGE_KEY, trimmedMemo); // 브라우저 저장소에 기록
     setIsEditingMemo(false);
   };
 
@@ -365,7 +371,7 @@ export default function ChecklistDetailPage() {
               나중에 확인하기 편해요.
             </p>
 
-            <div className="mt-4 rounded-xl bg-[#26D383] px-5 py-2 text-[13px] font-bold text-white">
+            <div className="mt-4 rounded-xl bg-[#26D383] px-4 py-2 text-[13px] font-bold text-white">
               사진 추가하기
             </div>
           </button>
