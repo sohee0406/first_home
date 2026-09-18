@@ -14,9 +14,6 @@ export function getChecklistMemoKey(itemId, houseId) {
     : `checklist_memo_${itemId}`;
 }
 
-// ==========================================
-// 기본(필수확인 탭 전용) 항목
-// ==========================================
 export const BASE_ITEMS = [
   {
     id: "water",

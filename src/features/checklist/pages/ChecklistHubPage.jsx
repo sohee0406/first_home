@@ -6,7 +6,7 @@ const CHECKLISTS = [
   { label: "현장 점검", to: "/checklist/on-site" },
   { label: "계약 전", to: "/checklist/contract-final" },
   { label: "입주 전", to: "/checklist/move-in" },
-  { label: "행정 도우미", to: "/admin" },
+  { label: "입주 후 챙길 일", to: "/admin" },
 ];
 
 export default function ChecklistHubPage() {

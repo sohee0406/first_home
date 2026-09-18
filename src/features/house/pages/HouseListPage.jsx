@@ -502,9 +502,6 @@ export default function HouseListPage() {
         </div>
       )}
 
-      {/* =========================
-          집 삭제 확인 모달
-      ========================= */}
       {deletingHouse && (
         <div
           className="

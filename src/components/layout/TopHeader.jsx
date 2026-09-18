@@ -20,7 +20,7 @@ export default function TopHeader() {
       path: "/checklist",
     },
     {
-      label: "행정 도우미",
+      label: "입주 후 챙길 일",
       icon: FileText,
       path: "/admin",
     },

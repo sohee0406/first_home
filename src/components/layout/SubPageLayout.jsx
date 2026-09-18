@@ -39,7 +39,7 @@ export default function SubPageLayout() {
     // =========================
     // 입주 관리
     // =========================
-    if (path === "/admin") return "행정 도우미";
+    if (path === "/admin") return "입주 후 챙길 일";
 
     if (path === "/admin/moveIn") return "전입신고";
     if (path === "/admin/fixedDate") return "확정일자";
