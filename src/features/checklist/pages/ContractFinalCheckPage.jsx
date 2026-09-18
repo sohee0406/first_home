@@ -12,7 +12,7 @@ const CHECKLIST_ITEMS = [
     path: "/checklist/contract/registry",
     icon: (
       <svg
-        className="w-6 h-6 text-emerald-500"
+        className="w-6 h-6 text-[#26D383]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -33,7 +33,7 @@ const CHECKLIST_ITEMS = [
     path: "/checklist/contract/landlord",
     icon: (
       <svg
-        className="w-6 h-6 text-emerald-500"
+        className="w-6 h-6 text-[#26D383]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -54,7 +54,7 @@ const CHECKLIST_ITEMS = [
     path: "/checklist/contract/mortgage",
     icon: (
       <svg
-        className="w-6 h-6 text-emerald-500"
+        className="w-6 h-6 text-[#26D383]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ const CHECKLIST_ITEMS = [
     path: "/checklist/contract/management-fee",
     icon: (
       <svg
-        className="w-6 h-6 text-emerald-500"
+        className="w-6 h-6 text-[#26D383]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -96,7 +96,7 @@ const CHECKLIST_ITEMS = [
     path: "/checklist/contract/special-clause",
     icon: (
       <svg
-        className="w-6 h-6 text-emerald-500"
+        className="w-6 h-6 text-[#26D383]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -229,13 +229,13 @@ export default function ContractFinalCheckPage() {
     : "/checklist/move-in";
 
   return (
-    <div className="min-h-screen bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
+    <div className=" bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
       <div>
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 leading-snug">
             계약 하기전에
             <br />
-            이것만큼은 <span className="text-emerald-500">꼭 확인하세요!</span>
+            이것만큼은 <span className="text-[#26D383]">꼭 확인하세요!</span>
           </h1>
 
           <div className="mt-4">
@@ -265,7 +265,7 @@ export default function ContractFinalCheckPage() {
                   ${
                     isCompleted
                       ? "bg-gray-100 border-gray-200"
-                      : "bg-white border-gray-100 shadow-sm hover:bg-gray-50"
+                      : "bg-white border-gray-100  shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
                   }
                 `}
               >
@@ -281,7 +281,7 @@ export default function ContractFinalCheckPage() {
                         justify-center
                         shrink-0
                         border
-                        shadow-sm
+                         shadow-[0_1px_3px_rgba(0,0,0,0.03)]
                         ${
                           isCompleted
                             ? "bg-gray-200 border-gray-200"

@@ -46,7 +46,7 @@ export default function RegisterWizard() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white  ">
       <WizardHeader title="매물 등록하기" onBack={handleBack} />
 
       {step < 4 && <StepIndicator current={step} />}

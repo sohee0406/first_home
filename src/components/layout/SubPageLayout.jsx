@@ -58,7 +58,7 @@ export default function SubPageLayout() {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-white shadow-sm">
+    <div className="max-w-md mx-auto   bg-white  shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
       <header className="h-[60px] flex items-center justify-between px-4 bg-white border-b border-gray-100 sticky top-0 z-30">
         {/* 뒤로가기 */}
         <button

@@ -30,7 +30,7 @@ export default function HouseDetailPage() {
 
   if (!house) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
+      <div className="  bg-white flex flex-col items-center justify-center px-4 text-center">
         <p className="text-[17px] font-bold text-gray-800">
           등록된 집을 찾을 수 없어요
         </p>
@@ -152,7 +152,7 @@ export default function HouseDetailPage() {
     totalInspection > 0 ? Math.round((checked / totalInspection) * 100) : 0;
 
   return (
-    <div className="bg-white min-h-screen pb-24">
+    <div className="bg-white   pb-24">
       <section className="px-4 pt-4">
         {/* 더보기 버튼 */}
         <div className="flex justify-end h-6 relative">
@@ -196,7 +196,7 @@ export default function HouseDetailPage() {
                   text-left
                   text-[14px]
                   text-gray-800
-                  hover:bg-gray-50
+                 
                 "
               >
                 <Pencil size={17} strokeWidth={1.7} />집 정보 수정
@@ -218,7 +218,7 @@ export default function HouseDetailPage() {
                   text-red-500
                   border-t
                   border-gray-100
-                  hover:bg-red-50
+                   
                 "
               >
                 <Trash2 size={17} strokeWidth={1.7} />집 삭제
@@ -644,7 +644,7 @@ export default function HouseDetailPage() {
             bg-white
             border
             border-gray-100
-            shadow-[0_1px_8px_rgba(0,0,0,0.04)]
+             shadow-[0_1px_5px_rgba(0,0,0,0.04)]
             overflow-hidden
           "
         >
@@ -672,7 +672,7 @@ export default function HouseDetailPage() {
                       py-4
                       text-left
                       transition-colors
-                      hover:bg-gray-50
+                
                       ${!isLast ? "border-b border-gray-100" : ""}
                     `}
                 >

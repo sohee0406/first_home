@@ -118,9 +118,9 @@ export default function MoveInCheckPage() {
   };
 
   return (
-    <div className="bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between min-h-screen">
+    <div className="bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between  ">
       <div className="space-y-4">
-        <div className="bg-white p-5 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center space-x-3 min-w-0">
               <div
@@ -203,7 +203,7 @@ export default function MoveInCheckPage() {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100">
           <div className="flex items-center justify-between mb-1">
             <h3 className="text-base font-bold text-gray-900">예상 초기비용</h3>
 

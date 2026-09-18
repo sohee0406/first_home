@@ -69,7 +69,7 @@ export default function HouseListPage() {
 
   return (
     <div
-      className="max-w-md mx-auto min-h-screen bg-white pb-24"
+      className="max-w-md mx-auto   bg-white pb-24"
       onClick={() => {
         if (openMenuId !== null) {
           setOpenMenuId(null);
@@ -137,7 +137,7 @@ export default function HouseListPage() {
                     rounded-xl
                     border
                     border-gray-100
-                    shadow-[0_1px_8px_rgba(0,0,0,0.06)]
+                     shadow-[0_1px_3px_rgba(0,0,0,0.03)]
                     p-3
                     flex
                     gap-5
@@ -254,7 +254,7 @@ export default function HouseListPage() {
                             gap-2
                             text-[14px]
                             text-gray-800
-                            hover:bg-gray-50
+                             
                           "
                         >
                           <Pencil size={16} strokeWidth={1.7} />집 이름 수정
@@ -277,7 +277,7 @@ export default function HouseListPage() {
                             text-red-500
                             border-t
                             border-gray-100
-                            hover:bg-red-50
+                             
                           "
                         >
                           <Trash2 size={16} strokeWidth={1.7} />집 삭제

@@ -89,7 +89,7 @@ export default function AdminHelperPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
+    <div className="  bg-white px-4 pt-8 pb-12 max-w-md mx-auto flex flex-col justify-between">
       <div className="space-y-6">
         {/* =========================
             1. 상단 타이틀
@@ -135,7 +135,7 @@ export default function AdminHelperPage() {
             ========================= */}
             <div
               onClick={() => navigate("/admin/moveIn")}
-              className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -176,7 +176,7 @@ export default function AdminHelperPage() {
             ========================= */}
             <div
               onClick={() => navigate("/admin/fixedDate")}
-              className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -221,7 +221,7 @@ export default function AdminHelperPage() {
               ========================= */}
               <div
                 onClick={() => navigate("/admin/rentalReport")}
-                className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
+                className="bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -263,7 +263,7 @@ export default function AdminHelperPage() {
               ========================= */}
               <div
                 onClick={() => navigate("/admin/parking")}
-                className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
+                className="bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -332,7 +332,7 @@ export default function AdminHelperPage() {
           </div>
 
           {/* 탭 컨텐츠 */}
-          <div className="mt-3 bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100">
+          <div className="mt-3 bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100">
             <h4 className="font-bold text-gray-900 text-sm mb-1">
               {activeTab} 사용자 명의 변경/신청은
             </h4>
@@ -376,7 +376,7 @@ export default function AdminHelperPage() {
             이사 후 변경해야 하는 주소를 확인하고 체크해보세요
           </p>
 
-          <div className="bg-white p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 grid grid-cols-2 gap-y-3 gap-x-4">
+          <div className="bg-white p-4 rounded-2xl shadow-[0_2px_2px_rgba(0,0,0,0.03)] border border-gray-100 grid grid-cols-2 gap-y-3 gap-x-4">
             {[
               { key: "bank", label: "은행 / 카드" },
               { key: "company", label: "회사 / 학교" },

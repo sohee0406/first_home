@@ -1,21 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronRight, Check } from "lucide-react";
 
 import {
-  REQUIRED_CHECKLIST_KEY,
+  getRequiredChecklistKey,
   ALL_ITEMS_FLAT,
 } from "../data/onSiteChecklistData";
 import { useHouse } from "../../house/context/HouseContext";
 
 // 필수확인 항목 중 완료(체크)한 항목을 저장하는 키
-const COMPLETED_STORAGE_KEY = "first_home_onsite_completed_checklist";
+// 집(house)마다 따로 저장되도록 house id를 붙여서 사용한다.
+function getCompletedStorageKey(houseId) {
+  return houseId
+    ? `first_home_onsite_completed_checklist_${houseId}`
+    : "first_home_onsite_completed_checklist";
+}
 
-function loadCompletedItems() {
+function loadCompletedItems(storageKey) {
   try {
-    const saved = JSON.parse(
-      localStorage.getItem(COMPLETED_STORAGE_KEY) || "[]",
-    );
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
     return Array.isArray(saved) ? saved : [];
   } catch {
@@ -55,25 +58,27 @@ const TABS = [
 
 export default function OnSiteCheckPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { houses, updateChecklistProgress } = useHouse();
 
-  // ==========================================
-  // 필수 체크된 항목
-  // ==========================================
-  const [requiredItems, setRequiredItems] = useState([]);
-
-  // ==========================================
-  // 완료된 항목 (새로고침/재방문해도 유지되도록 저장)
-  // ==========================================
-  const [completedItems, setCompletedItems] = useState(() =>
-    loadCompletedItems(),
-  );
+  const houseId = searchParams.get("houseId");
 
   // 현재 진행 중인 집(체크리스트 진행 상태를 반영할 대상)
+  // houseId가 URL에 있으면 해당 집을 우선 사용
   const currentHouse = useMemo(() => {
     if (!houses || houses.length === 0) {
       return null;
+    }
+
+    if (houseId) {
+      const selectedHouse = houses.find(
+        (house) => String(house.id) === String(houseId),
+      );
+
+      if (selectedHouse) {
+        return selectedHouse;
+      }
     }
 
     return (
@@ -84,15 +89,45 @@ export default function OnSiteCheckPage() {
         return checked < total;
       }) || houses[0]
     );
-  }, [houses]);
+  }, [houses, houseId]);
+
+  const completedStorageKey = getCompletedStorageKey(currentHouse?.id);
+  const requiredStorageKey = getRequiredChecklistKey(currentHouse?.id);
+
+  // 다른 탭/페이지로 이동할 때도 houseId를 계속 유지하기 위한 헬퍼
+  // (URL에 없던 경우에도 실제로 사용 중인 집 id를 넘겨서 저장 키가 항상 일치하도록 함)
+  const getPathWithHouseId = (path) => {
+    if (!currentHouse) {
+      return path;
+    }
+
+    return `${path}?houseId=${currentHouse.id}`;
+  };
 
   // ==========================================
-  // localStorage에서 필수 항목 불러오기
+  // 필수 체크된 항목
+  // ==========================================
+  const [requiredItems, setRequiredItems] = useState([]);
+
+  // ==========================================
+  // 완료된 항목 (집마다 따로, 새로고침/재방문해도 유지되도록 저장)
+  // ==========================================
+  const [completedItems, setCompletedItems] = useState(() =>
+    loadCompletedItems(completedStorageKey),
+  );
+
+  // 대상 집이 바뀌면 해당 집에 저장된 완료 목록을 다시 불러옴
+  useEffect(() => {
+    setCompletedItems(loadCompletedItems(completedStorageKey));
+  }, [completedStorageKey]);
+
+  // ==========================================
+  // localStorage에서 필수 항목 불러오기 (집마다 따로 저장됨)
   // ==========================================
   const loadRequiredItems = () => {
     try {
       const saved = JSON.parse(
-        localStorage.getItem(REQUIRED_CHECKLIST_KEY) || "[]",
+        localStorage.getItem(requiredStorageKey) || "[]",
       );
 
       if (Array.isArray(saved)) {
@@ -106,11 +141,11 @@ export default function OnSiteCheckPage() {
   };
 
   // ==========================================
-  // 페이지 처음 들어왔을 때 불러오기
+  // 처음 들어왔을 때, 그리고 대상 집이 바뀔 때마다 불러오기
   // ==========================================
   useEffect(() => {
     loadRequiredItems();
-  }, []);
+  }, [requiredStorageKey]);
 
   // ==========================================
   // 다른 페이지에서 돌아왔을 때
@@ -144,7 +179,7 @@ export default function OnSiteCheckPage() {
 
       window.removeEventListener("focus", loadRequiredItems);
     };
-  }, []);
+  }, [requiredStorageKey]);
 
   // ==========================================
   // 필수확인에 등록된 항목만 가져오기
@@ -172,7 +207,7 @@ export default function OnSiteCheckPage() {
   const handleDetailClick = (e, id) => {
     e.stopPropagation();
 
-    navigate(`/checklist/on-site/detail/${id}`);
+    navigate(getPathWithHouseId(`/checklist/on-site/detail/${id}`));
   };
 
   // ==========================================
@@ -202,18 +237,15 @@ export default function OnSiteCheckPage() {
   ).length;
 
   // ==========================================
-  // 완료 상태를 로컬스토리지에 저장
+  // 완료 상태를 집 별로 로컬스토리지에 저장
   // ==========================================
   useEffect(() => {
     try {
-      localStorage.setItem(
-        COMPLETED_STORAGE_KEY,
-        JSON.stringify(completedItems),
-      );
+      localStorage.setItem(completedStorageKey, JSON.stringify(completedItems));
     } catch (error) {
       console.error("현장 점검 완료 상태 저장 실패:", error);
     }
-  }, [completedItems]);
+  }, [completedItems, completedStorageKey]);
 
   // ==========================================
   // 필수확인 진행 상태를 HouseContext에 반영
@@ -233,7 +265,7 @@ export default function OnSiteCheckPage() {
   }, [currentHouse?.id, checkedCount, totalCount]);
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-sm pb-24">
+    <div className="max-w-md mx-auto   bg-white flex flex-col  shadow-[0_1px_3px_rgba(0,0,0,0.03)] pb-24">
       {/* ========================================== */}
       {/* 상단 탭 */}
       {/* ========================================== */}
@@ -245,7 +277,7 @@ export default function OnSiteCheckPage() {
           return (
             <button
               key={tab.label}
-              onClick={() => navigate(tab.path)}
+              onClick={() => navigate(getPathWithHouseId(tab.path))}
               className="px-4 py-2 rounded-xl text-[14px] font-medium shrink-0"
               style={{
                 backgroundColor: isActive ? "#EAFEF1" : "#F3F4F6",
@@ -417,7 +449,9 @@ export default function OnSiteCheckPage() {
           </button>
 
           <button
-            onClick={() => navigate("/checklist/contract-final")}
+            onClick={() =>
+              navigate(getPathWithHouseId("/checklist/contract-final"))
+            }
             className="
               flex-1
               py-4

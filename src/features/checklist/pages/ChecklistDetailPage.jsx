@@ -1,16 +1,23 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { X, AlertCircle, Check, Camera, ImagePlus } from "lucide-react";
 
 import {
-  REQUIRED_CHECKLIST_KEY,
   getChecklistItemById,
   getDetailContent,
+  getRequiredChecklistKey,
+  getChecklistMemoKey,
 } from "../data/onSiteChecklistData";
 
 export default function ChecklistDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const houseId = searchParams.get("houseId");
+
+  const requiredStorageKey = getRequiredChecklistKey(houseId);
+  const memoStorageKey = getChecklistMemoKey(id, houseId);
 
   const fileInputRef = useRef(null);
 
@@ -20,12 +27,12 @@ export default function ChecklistDetailPage() {
     getDetailContent(item) || getDetailContent(getChecklistItemById("water"));
 
   // ==========================================
-  // 필수항목 상태
+  // 필수항목 상태 (집마다 따로 저장)
   // ==========================================
   const [isRequired, setIsRequired] = useState(() => {
     try {
       const saved = JSON.parse(
-        localStorage.getItem(REQUIRED_CHECKLIST_KEY) || "[]",
+        localStorage.getItem(requiredStorageKey) || "[]",
       );
 
       return Array.isArray(saved) && saved.includes(id);
@@ -40,15 +47,28 @@ export default function ChecklistDetailPage() {
   const [showWarning, setShowWarning] = useState(true);
 
   // ==========================================
-  // 메모 (localStorage 연동 적용)
+  // 메모 (집마다, 항목마다 따로 저장)
   // ==========================================
-  const MEMO_STORAGE_KEY = `checklist_memo_${id}`;
-
   const [memo, setMemo] = useState(() => {
-    return localStorage.getItem(MEMO_STORAGE_KEY) || "";
+    return localStorage.getItem(memoStorageKey) || "";
   });
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoInput, setMemoInput] = useState("");
+
+  // 대상 집이 바뀌면 해당 집에 저장된 값을 다시 불러옴
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(requiredStorageKey) || "[]",
+      );
+
+      setIsRequired(Array.isArray(saved) && saved.includes(id));
+    } catch {
+      setIsRequired(false);
+    }
+
+    setMemo(localStorage.getItem(memoStorageKey) || "");
+  }, [requiredStorageKey, memoStorageKey, id]);
 
   // ==========================================
   // 사진
@@ -61,7 +81,7 @@ export default function ChecklistDetailPage() {
   const handleRequiredToggle = () => {
     try {
       const saved = JSON.parse(
-        localStorage.getItem(REQUIRED_CHECKLIST_KEY) || "[]",
+        localStorage.getItem(requiredStorageKey) || "[]",
       );
 
       const currentItems = Array.isArray(saved) ? saved : [];
@@ -76,7 +96,7 @@ export default function ChecklistDetailPage() {
           : [...currentItems, id];
       }
 
-      localStorage.setItem(REQUIRED_CHECKLIST_KEY, JSON.stringify(nextItems));
+      localStorage.setItem(requiredStorageKey, JSON.stringify(nextItems));
 
       window.dispatchEvent(new Event("requiredChecklistChanged"));
 
@@ -100,7 +120,7 @@ export default function ChecklistDetailPage() {
   const handleSaveMemo = () => {
     const trimmedMemo = memoInput.trim();
     setMemo(trimmedMemo);
-    localStorage.setItem(MEMO_STORAGE_KEY, trimmedMemo); // 브라우저 저장소에 기록
+    localStorage.setItem(memoStorageKey, trimmedMemo); // 브라우저 저장소에 기록
     setIsEditingMemo(false);
   };
 
@@ -222,7 +242,7 @@ export default function ChecklistDetailPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 p-4 shadow-sm">
+        <div className="rounded-2xl border border-gray-100 p-4  shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           {isEditingMemo ? (
             <>
               <textarea

@@ -30,7 +30,7 @@ export default function MemoBox({ memo = "", onSave }) {
   };
 
   return (
-    <div className="border border-gray-100 rounded-xl p-4 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div className="border border-gray-100 rounded-xl p-4  shadow-[0_1px_5px_rgba(0,0,0,0.04)]">
       {/* 메모 헤더 */}
       <div className="flex items-center justify-between">
         <span className="font-bold text-[15px] text-gray-900">메모</span>

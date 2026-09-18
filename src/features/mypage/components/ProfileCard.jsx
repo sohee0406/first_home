@@ -148,7 +148,7 @@ export default function ProfileCard({ name }) {
         </div>
       ) : (
         // 수정 상태
-        <div className="border border-gray-100 rounded-2xl p-4 bg-white shadow-sm">
+        <div className="border border-gray-100 rounded-2xl p-4 bg-white  shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-bold text-gray-900">프로필 수정</p>
 
@@ -214,7 +214,7 @@ export default function ProfileCard({ name }) {
                     flex
                     items-center
                     justify-center
-                    shadow-sm
+                     shadow-[0_1px_3px_rgba(0,0,0,0.03)]
                   "
                   aria-label="프로필 사진 삭제"
                 >
@@ -285,7 +285,7 @@ export default function ProfileCard({ name }) {
               h-11
               mt-4
               rounded-xl
-              bg-emerald-500
+              bg-[#26D383]
               text-white
               text-sm
               font-semibold

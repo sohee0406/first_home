@@ -1,8 +1,9 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ChevronRight, Check } from "lucide-react";
 
 import { CATEGORY_ITEMS } from "../data/onSiteChecklistData";
+import { useHouse } from "../../house/context/HouseContext";
 
 const TABS = [
   {
@@ -34,6 +35,48 @@ const TABS = [
 export default function OnSiteCategoryPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const { houses } = useHouse();
+
+  const houseId = searchParams.get("houseId");
+
+  // 현재 진행 중인 집(체크리스트 저장 대상)
+  // houseId가 URL에 있으면 해당 집을 우선 사용
+  const currentHouse = (() => {
+    if (!houses || houses.length === 0) {
+      return null;
+    }
+
+    if (houseId) {
+      const selectedHouse = houses.find(
+        (house) => String(house.id) === String(houseId),
+      );
+
+      if (selectedHouse) {
+        return selectedHouse;
+      }
+    }
+
+    return (
+      houses.find((house) => {
+        const checked = Number(house.checked || 0);
+        const total = Number(house.totalInspection || 0);
+
+        return checked < total;
+      }) || houses[0]
+    );
+  })();
+
+  // 다른 탭/페이지로 이동할 때도 houseId를 계속 유지하기 위한 헬퍼
+  // (URL에 없던 경우에도 실제로 사용 중인 집 id를 넘겨서 저장 키가 항상 일치하도록 함)
+  const getPathWithHouseId = (path) => {
+    if (!currentHouse) {
+      return path;
+    }
+
+    return `${path}?houseId=${currentHouse.id}`;
+  };
 
   // 현재 카테고리 파악 (예: entrance, room 등 / 필수확인은 undefined일 수 있으므로 'on-site-main' 등으로 처리)
   const currentCategory =
@@ -41,7 +84,10 @@ export default function OnSiteCategoryPage() {
       location.pathname.includes(`/checklist/on-site/${key}`),
     ) || "main";
 
-  const STORAGE_KEY = `onsite_completed_${currentCategory}`;
+  // 집마다, 카테고리마다 따로 저장되도록 house id를 붙여서 사용한다.
+  const STORAGE_KEY = `onsite_completed_${currentCategory}_${
+    currentHouse?.id ?? "default"
+  }`;
 
   // 탭이 바뀔 때마다 해당 카테고리의 완료 목록을 localStorage에서 불러옴
   const [completedItems, setCompletedItems] = useState(() => {
@@ -87,7 +133,7 @@ export default function OnSiteCategoryPage() {
 
   const handleDetailClick = (e, id) => {
     e.stopPropagation();
-    navigate(`/checklist/on-site/${id}`);
+    navigate(getPathWithHouseId(`/checklist/on-site/${id}`));
   };
 
   const sortedItems = [...items].sort((a, b) => {
@@ -102,7 +148,7 @@ export default function OnSiteCategoryPage() {
   });
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col shadow-sm pb-24">
+    <div className="max-w-md mx-auto   bg-white flex flex-col  shadow-[0_1px_3px_rgba(0,0,0,0.03)] pb-24">
       {/* 탭 */}
       <div className="flex gap-2 px-4 py-3 bg-white overflow-x-auto no-scrollbar border-b border-gray-100">
         {TABS.map((tab) => {
@@ -111,7 +157,7 @@ export default function OnSiteCategoryPage() {
           return (
             <button
               key={tab.label}
-              onClick={() => navigate(tab.path)}
+              onClick={() => navigate(getPathWithHouseId(tab.path))}
               className="px-4 py-2 rounded-xl text-[14px] font-medium shrink-0"
               style={{
                 backgroundColor: isActive ? "#EAFEF1" : "#F3F4F6",
@@ -256,7 +302,9 @@ export default function OnSiteCategoryPage() {
           </button>
 
           <button
-            onClick={() => navigate("/checklist/contract-final")}
+            onClick={() =>
+              navigate(getPathWithHouseId("/checklist/contract-final"))
+            }
             className="
               flex-1
               py-4

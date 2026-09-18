@@ -8,12 +8,12 @@ import RecentHouseSection from "./components/RecentHouseSection";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto min-h-screen  bg-white">
+    <div className="  max-w-[393px] mx-auto">
+      <div className="  bg-white">
         <TopHeader />
+        <GreetingBanner />
 
-        <div className="flex flex-col gap-10  pb-8">
-          <GreetingBanner />
+        <div className="flex flex-col mt-6 gap-16">
           <OngoingHouseCard />
           <FirstMoveGuideCard />
           <RecommendedChecklist />

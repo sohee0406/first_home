@@ -146,14 +146,14 @@ export default function ContractChecklistDetailPage() {
   // 잘못된 주소로 접근했을 경우
   if (!content) {
     return (
-      <div className="min-h-screen bg-white px-4 py-10 max-w-md mx-auto">
+      <div className="  bg-white px-4 py-10 max-w-md mx-auto">
         <h1 className="text-xl font-bold text-gray-900">
           페이지를 찾을 수 없어요
         </h1>
 
         <button
           onClick={() => navigate("/checklist/contract")}
-          className="mt-6 w-full py-4 rounded-2xl bg-emerald-500 text-white font-bold"
+          className="mt-6 w-full py-4 rounded-2xl bg-[#26D383] text-white font-bold"
         >
           계약 체크리스트로 돌아가기
         </button>
@@ -162,15 +162,13 @@ export default function ContractChecklistDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 py-7 ">
+    <div className="  bg-white px-4 py-7 ">
       {/* 제목 */}
       <div>
         <h1 className="text-[22px] font-bold text-gray-900 leading-snug">
           {content.title}
           <br />
-          <span className="text-emerald-500 text-[18px]">
-            {content.subtitle}
-          </span>
+          <span className="text-[#26D383] text-[18px]">{content.subtitle}</span>
         </h1>
 
         <p className="mt-3 text-sm text-gray-500 leading-relaxed">

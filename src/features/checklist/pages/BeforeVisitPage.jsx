@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft, X, Plus, Check, Lightbulb, Trash2 } from "lucide-react";
 import { Icon } from "@iconify/react";
 
 import { useHouse } from "../../house/context/HouseContext";
 
-const STORAGE_KEY = "first_home_before_visit_checklist";
+// 집마다 따로 저장되도록 house id를 붙여서 사용한다.
+function getStorageKey(houseId) {
+  return houseId
+    ? `first_home_before_visit_checklist_${houseId}`
+    : "first_home_before_visit_checklist";
+}
 
 const DEFAULT_PREP_ITEMS = [
   {
@@ -43,9 +48,9 @@ const DEFAULT_CHECK_ITEMS = [
   },
 ];
 
-function getSavedChecklist() {
+function getSavedChecklist(storageKey) {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(storageKey);
 
     if (!saved) {
       return {
@@ -77,25 +82,26 @@ function getSavedChecklist() {
 
 export default function BeforeVisitPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { houses, updateChecklistProgress } = useHouse();
 
-  const [initialChecklist] = useState(() => getSavedChecklist());
+  const houseId = searchParams.get("houseId");
 
-  const [prepItems, setPrepItems] = useState(initialChecklist.prepItems);
-
-  const [checkItems, setCheckItems] = useState(initialChecklist.checkItems);
-
-  const [activeAddSection, setActiveAddSection] = useState(null);
-
-  const [newItemText, setNewItemText] = useState("");
-
-  const [showTip, setShowTip] = useState(true);
-
-  // 현재 집
+  // 현재 집 (houseId가 URL에 있으면 해당 집을 우선 사용)
   const currentHouse = useMemo(() => {
     if (!houses || houses.length === 0) {
       return null;
+    }
+
+    if (houseId) {
+      const selectedHouse = houses.find(
+        (house) => String(house.id) === String(houseId),
+      );
+
+      if (selectedHouse) {
+        return selectedHouse;
+      }
     }
 
     return (
@@ -107,12 +113,46 @@ export default function BeforeVisitPage() {
         return checked < total;
       }) || houses[0]
     );
-  }, [houses]);
+  }, [houses, houseId]);
+
+  const storageKey = getStorageKey(currentHouse?.id);
+
+  // 다른 페이지로 이동할 때도 houseId를 계속 유지하기 위한 헬퍼
+  // (URL에 없던 경우에도 실제로 사용 중인 집 id를 넘겨서 저장 키가 항상 일치하도록 함)
+  const getPathWithHouseId = (path) => {
+    if (!currentHouse) {
+      return path;
+    }
+
+    return `${path}?houseId=${currentHouse.id}`;
+  };
+
+  const [prepItems, setPrepItems] = useState(
+    () => getSavedChecklist(storageKey).prepItems,
+  );
+
+  const [checkItems, setCheckItems] = useState(
+    () => getSavedChecklist(storageKey).checkItems,
+  );
+
+  const [activeAddSection, setActiveAddSection] = useState(null);
+
+  const [newItemText, setNewItemText] = useState("");
+
+  const [showTip, setShowTip] = useState(true);
+
+  // 대상 집이 바뀌면 해당 집에 저장된 체크리스트를 다시 불러옴
+  useEffect(() => {
+    const saved = getSavedChecklist(storageKey);
+
+    setPrepItems(saved.prepItems);
+    setCheckItems(saved.checkItems);
+  }, [storageKey]);
 
   useEffect(() => {
     try {
       localStorage.setItem(
-        STORAGE_KEY,
+        storageKey,
         JSON.stringify({
           prepItems,
           checkItems,
@@ -121,7 +161,7 @@ export default function BeforeVisitPage() {
     } catch (error) {
       console.error("체크리스트 저장 실패:", error);
     }
-  }, [prepItems, checkItems]);
+  }, [prepItems, checkItems, storageKey]);
 
   // 전체 항목
   const allItems = useMemo(() => {
@@ -241,7 +281,7 @@ export default function BeforeVisitPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col">
+    <div className="max-w-md mx-auto  bg-white flex flex-col">
       <div className="flex-1">
         {/* 타이틀 */}
         <section className="flex items-center gap-4 px-4 py-5">
@@ -629,7 +669,7 @@ export default function BeforeVisitPage() {
 
           <button
             type="button"
-            onClick={() => navigate("/checklist/around")}
+            onClick={() => navigate(getPathWithHouseId("/checklist/around"))}
             className="
               flex-1
               py-4

@@ -1,6 +1,7 @@
 import { ChevronRight, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useHouse } from "../../house/context/HouseContext";
+import houseImage from "../../../img/home 1.png";
 
 export default function OngoingHouseCard() {
   const navigate = useNavigate();
@@ -89,9 +90,12 @@ export default function OngoingHouseCard() {
         cursor-pointer
         active:scale-[0.99]
         transition-transform
+        relative
+        overflow-visible
       "
       onClick={handleHouseClick}
     >
+      {/* 진행 중인 집 */}
       <span
         className="
           inline-flex
@@ -106,16 +110,37 @@ export default function OngoingHouseCard() {
         진행 중인 집
       </span>
 
-      <p className="font-bold text-[17px] mt-2 text-gray-900">
-        {ongoingHouse.name || "등록한 집"}
-      </p>
+      {/* 집 사진
+          카드 오른쪽 위에 떠 있는 이미지 */}
+      <img
+        src={houseImage}
+        alt="집 사진"
+        className="
+          absolute
+          right-2
+          -top-10
+          w-30
+          h-30
+          object-contain
+          z-20
+          pointer-events-none
+        "
+      />
 
-      {ongoingHouse.address && (
-        <p className="text-[12px] text-gray-400 mt-1 truncate">
-          {ongoingHouse.address}
+      {/* 집 이름 / 주소 */}
+      <div className="mt-2 pr-20">
+        <p className="font-bold text-[17px] text-gray-900">
+          {ongoingHouse.name || "등록한 집"}
         </p>
-      )}
 
+        {ongoingHouse.address && (
+          <p className="text-[12px] text-gray-400 mt-1 truncate">
+            {ongoingHouse.address}
+          </p>
+        )}
+      </div>
+
+      {/* 체크리스트 진행률 */}
       <div
         className="
           bg-white
@@ -147,16 +172,17 @@ export default function OngoingHouseCard() {
         </div>
 
         <div className="flex justify-between items-center mt-2">
-          <span className="text-[11px] text-gray-400">
+          <span className="text-[11px] text-gray-400 truncate pr-2">
             {nextChecklist
               ? `${nextChecklist.title} 확인이 남아있어요`
               : "체크리스트를 확인해주세요"}
           </span>
 
-          <span className="text-[11px] text-gray-500">{percent}%</span>
+          <span className="text-[11px] text-gray-500 shrink-0">{percent}%</span>
         </div>
       </div>
 
+      {/* 체크리스트 바로가기 */}
       <button
         type="button"
         className="

@@ -6,7 +6,7 @@ const CHECKLISTS = [
   { label: "현장 점검", to: "/checklist/on-site" },
   { label: "계약 전", to: "/checklist/contract-final" },
   { label: "입주 전", to: "/checklist/move-in" },
-  { label: "행정 처리", to: "/admin" },
+  { label: "행정 도우미", to: "/admin" },
 ];
 
 export default function ChecklistHubPage() {
@@ -45,7 +45,7 @@ export default function ChecklistHubPage() {
           <Link
             key={c.to}
             to={getPath(c.to)}
-            className="w-full py-4 px-6 bg-[#F8F9FA] hover:bg-[#F1F3F5] active:scale-[0.98] text-gray-900 font-semibold text-center rounded-2xl transition-all duration-150"
+            className="w-full py-4 px-6 bg-[#F8F9FA]  text-gray-900 font-semibold text-center rounded-2xl transition-all duration-150"
           >
             {c.label}
           </Link>

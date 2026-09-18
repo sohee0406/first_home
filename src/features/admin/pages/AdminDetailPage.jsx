@@ -126,7 +126,7 @@ export default function AdminDetailPage() {
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-white px-4 py-10 max-w-md mx-auto">
+      <div className="  bg-white px-4 py-10 max-w-md mx-auto">
         <h1 className="text-xl font-bold text-gray-900">
           페이지를 찾을 수 없어요
         </h1>
@@ -148,7 +148,7 @@ export default function AdminDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 py-7 pb-10 max-w-md mx-auto">
+    <div className="  bg-white px-4 py-7 pb-10 max-w-md mx-auto">
       {/* 제목 */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 leading-snug">

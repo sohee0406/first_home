@@ -15,8 +15,8 @@ export default function FirstMoveGuideCard() {
           border-gray-100
           rounded-2xl
           p-4
-          mb-6
-          shadow-sm
+          
+           shadow-[0_1px_3px_rgba(0,0,0,0.03)]
           cursor-pointer
         "
       >
@@ -31,16 +31,16 @@ export default function FirstMoveGuideCard() {
             </p>
           </div>
 
-          <ClipboardList className="w-6 h-6 text-emerald-500" />
+          <ClipboardList className="w-6 h-6 text-[#26D383]" />
         </div>
 
         <div className="flex items-center justify-between bg-emerald-50 rounded-xl px-4 py-3 mt-3">
           <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-            <CheckSquare className="w-4 h-4 text-emerald-500" />
+            <CheckSquare className="w-4 h-4 text-[#26D383]" />
             체크리스트 둘러보기
           </span>
 
-          <ChevronRight className="w-4 h-4 text-emerald-500" />
+          <ChevronRight className="w-4 h-4 text-[#26D383]" />
         </div>
       </div>
     </div>

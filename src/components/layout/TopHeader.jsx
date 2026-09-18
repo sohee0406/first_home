@@ -41,7 +41,7 @@ export default function TopHeader() {
       {/* 상단 헤더 */}
       <header className="flex items-center justify-between px-4 py-3 bg-white">
         {/* 로고 */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer">
           <img src={logo} alt="첫집 로고" className="w-8 h-8 object-contain" />
         </div>
 
@@ -75,7 +75,7 @@ export default function TopHeader() {
           w-[280px]
           bg-white
           z-50
-          shadow-xl
+            shadow-[0_1px_3px_rgba(0,0,0,0.03)]
           transform
           transition-transform
           duration-300
@@ -87,9 +87,11 @@ export default function TopHeader() {
         <div className="h-[60px] flex items-center justify-between px-4 border-b border-gray-100">
           {/* 로고 */}
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-green-500 rounded-lg" />
-
-            <span className="font-bold text-base">첫집</span>
+            <img
+              src={logo}
+              alt="첫집 로고"
+              className="w-8 h-8 object-contain"
+            />
           </div>
 
           {/* 닫기 버튼 */}
@@ -113,7 +115,7 @@ export default function TopHeader() {
                 key={item.path}
                 type="button"
                 onClick={() => handleMenuClick(item.path)}
-                className="w-full flex items-center gap-4 px-3 py-4 rounded-xl text-left hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                className="w-full flex items-center gap-4 px-3 py-4 rounded-xl text-left"
               >
                 <Icon size={21} className="text-gray-700" />
 

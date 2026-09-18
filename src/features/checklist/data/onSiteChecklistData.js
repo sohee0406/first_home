@@ -1,5 +1,19 @@
 export const REQUIRED_CHECKLIST_KEY = "first_home_required_checklist";
 
+// 집(house)마다 "필수항목으로 등록"한 목록이 따로 저장되도록 house id를 붙여서 사용한다.
+export function getRequiredChecklistKey(houseId) {
+  return houseId
+    ? `${REQUIRED_CHECKLIST_KEY}_${houseId}`
+    : REQUIRED_CHECKLIST_KEY;
+}
+
+// 집(house)마다, 항목마다 메모가 따로 저장되도록 house id를 붙여서 사용한다.
+export function getChecklistMemoKey(itemId, houseId) {
+  return houseId
+    ? `checklist_memo_${itemId}_${houseId}`
+    : `checklist_memo_${itemId}`;
+}
+
 // ==========================================
 // 기본(필수확인 탭 전용) 항목
 // ==========================================
@@ -47,7 +61,7 @@ export const BASE_ITEMS = [
     category: "base",
     title: "배수",
     badgeType: "확인",
-    badgeColor: "text-emerald-500",
+    badgeColor: "text-[#26D383]",
     description: "물이 잘 빠지는지 확인하세요",
     whyText:
       "배수가 원활하지 않으면 물이 고이거나 역류하고 악취가 발생할 수 있습니다. 입주 후 바로 발견하기 어려운 문제이기 때문에 방문했을 때 직접 물을 흘려보는 것이 좋습니다.",
@@ -110,7 +124,7 @@ export const CATEGORY_ITEMS = {
       title: "신발장",
       description: "부츠나 장화 등 높은 신발도 수납할 수 있는지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "신발장은 매일 사용하는 수납공간이라 실제로 사용할 수 있는 크기와 내부 상태를 확인해야 합니다. 특히 선반 간격이 좁으면 부츠나 장화처럼 큰 신발을 보관하기 어렵습니다.",
       howSteps: [
@@ -129,7 +143,7 @@ export const CATEGORY_ITEMS = {
       description:
         "하단 띄움 시공으로 자주 신는 신발을 깔끔하게 정리할 수 있는지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "현관 하단 공간은 자주 신는 신발을 꺼내두는 데 활용할 수 있습니다. 실제 생활에서 신발이 현관에 쌓이지 않도록 사용할 수 있는 공간인지 확인하는 것이 좋습니다.",
       howSteps: [
@@ -185,7 +199,7 @@ export const CATEGORY_ITEMS = {
       title: "일괄소등",
       description: "외출 시 집안 전체를 한 번에 소등할 수 있는지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "일괄소등 기능이 있으면 외출할 때 여러 조명을 하나씩 끄지 않아도 되어 편리합니다. 기능이 실제로 연결되어 있는지 방문 시 확인하는 것이 좋습니다.",
       howSteps: [
@@ -203,7 +217,7 @@ export const CATEGORY_ITEMS = {
       title: "센서등",
       description: "현관 센서등이 잘 켜지고 꺼지는지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "현관 센서등은 밤에 귀가했을 때 현관 주변을 밝히는 역할을 합니다. 센서가 제대로 작동하지 않으면 어두운 현관에서 불편할 수 있습니다.",
       howSteps: [
@@ -373,7 +387,7 @@ export const CATEGORY_ITEMS = {
       title: "가전공간",
       description: "냉장고와 식기세척기 등을 놓을 공간이 충분한지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "가전제품은 제품 크기뿐만 아니라 문이 열리는 방향과 주변 여유 공간까지 고려해야 합니다. 공간이 부족하면 실제 제품을 설치하기 어려울 수 있습니다.",
       howSteps: [
@@ -409,7 +423,7 @@ export const CATEGORY_ITEMS = {
       title: "상하부장",
       description: "싱크대 상하부장의 수평과 수납 상태를 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "주방 수납장은 식기와 식재료를 보관하는 공간이므로 문과 서랍이 제대로 작동하고 내부가 깨끗한지 확인해야 합니다. 물을 사용하는 공간이라 하부장의 습기 여부도 중요합니다.",
       howSteps: [
@@ -538,7 +552,7 @@ export const CATEGORY_ITEMS = {
       title: "욕실수납",
       description: "욕실 수납장과 거울의 백화 현상이나 파손을 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "욕실 수납장은 습기에 지속적으로 노출되기 때문에 부식이나 변색, 들뜸이 생길 수 있습니다. 거울 역시 가장자리 손상이나 백화 현상을 확인하는 것이 좋습니다.",
       howSteps: [
@@ -576,7 +590,7 @@ export const CATEGORY_ITEMS = {
       title: "거실공간",
       description: "대형 가구와 TV를 배치할 공간이 충분한지 확인하세요.",
       badgeType: "확인",
-      badgeColor: "text-emerald-500",
+      badgeColor: "text-[#26D383]",
       whyText:
         "거실은 소파, TV장, 식탁 등 여러 가구가 들어가는 공간입니다. 실제 가구를 배치했을 때 생활 동선이 충분히 남는지 확인하는 것이 중요합니다.",
       howSteps: [

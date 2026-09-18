@@ -5,3 +5,9 @@
 body {
   background-color: white;
 }
+
+html,
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+}

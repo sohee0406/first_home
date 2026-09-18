@@ -26,9 +26,9 @@ export default function RecentHouseSection({ title, isWished = false }) {
   const visibleHouses = displayHouses.slice(0, 5);
 
   return (
-    <div className="px-[16px]">
+    <div className="px-[16px] ">
       {/* 제목 */}
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-2">
         <p className="font-bold">{title}</p>
 
         {!isWished && actualHouses.length > 0 && (
@@ -55,7 +55,6 @@ export default function RecentHouseSection({ title, isWished = false }) {
             border-dashed
             rounded-2xl
             h-40
-            mb-16
             flex
             items-center
             justify-center
@@ -89,7 +88,6 @@ export default function RecentHouseSection({ title, isWished = false }) {
             border-dashed
             rounded-2xl
             h-40
-            mb-16
             flex
             items-center
             justify-center
