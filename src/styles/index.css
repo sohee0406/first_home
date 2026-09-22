@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 데스크톱(넓은 화면)에서는 좌우 여백을 회색으로,
+   실제 앱 화면(아이폰 16 = 393px)만 흰색으로 보이게 한다. */
 body {
-  background-color: white;
+  background-color: #ececec;
 }
 
 html,
-body {
+body,
+#root {
   margin: 0;
+  height: 100%;
   font-family: "Noto Sans KR", sans-serif;
 }

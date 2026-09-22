@@ -53,10 +53,24 @@ const router = createBrowserRouter([
   // ==================================================
   {
     element: (
-      <>
-        <ScrollToTop />
-        <Outlet />
-      </>
+      // ==================================================
+      // 전체 화면(모바일 프레임)
+      // - 바깥(회색): 데스크톱 등 넓은 화면에서의 여백
+      // - 안쪽(흰색, 393px): 아이폰 16 기준 실제 앱 화면
+      // - transform을 줘서 이 박스가 내부 fixed 요소(바텀 네비,
+      //   바텀시트, 사이드 메뉴 등)의 기준이 되게 함 →
+      //   fixed 요소가 브라우저 창이 아닌 이 프레임 안에만 표시됨
+      // ==================================================
+      <div className=" w-full flex justify-center bg-[#ececec] overflow-hidden">
+        <div
+          id="app-frame"
+          className="h-full w-full max-w-[393px] bg-white relative overflow-y-auto overflow-x-hidden"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <ScrollToTop />
+          <Outlet />
+        </div>
+      </div>
     ),
     children: [
       // ==================================================
